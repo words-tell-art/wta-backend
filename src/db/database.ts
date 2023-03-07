@@ -4,6 +4,7 @@ import config from "../config/db.config"
 import {init as initLogModel} from "../models/log.model"
 import {init as initWordModel} from "../models/word.model"
 import {init as initArtModel} from "../models/art.model"
+import {init as initWordSupplyModel} from "../models/word-supply.model"
 
 export const connectionParams = {
     username: config.username,
@@ -32,6 +33,7 @@ const sequelize = new Sequelize(connectionParams)
 export {sequelize}
 
 const db = {
+	WordSupply: initWordSupplyModel(sequelize),
 	Arts: initArtModel(sequelize),
 	Words: initWordModel(sequelize),
     Logs: initLogModel(sequelize)

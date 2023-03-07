@@ -1,5 +1,5 @@
-import {PathRequest} from "@d-lab/api-kit"
-import {GetRequest, RevealRequest} from "../api/dtos/word"
+import {AuthRequest, PathRequest} from "@d-lab/api-kit"
+import {GetRequest} from "../api/dtos/word"
 import {wordService} from "../services"
 import {MetadataEthDto, Blockchain, MetadataImxDto} from "@d-lab/metadata"
 import metadataClient from "../clients/metadata.client"
@@ -7,9 +7,8 @@ import nftConfig from "../config/nft.config"
 
 export default class WordController {
 
-    async reveal(req: PathRequest<RevealRequest>): Promise<void> {
-        const tokenId = Number.parseInt(req.params.id)
-        await wordService.reveal(tokenId)
+    async revealAllSupply(req: AuthRequest): Promise<void> {
+        await wordService.revealAllSupply()
     }
 
     async metadata(req: PathRequest<GetRequest>) : Promise<MetadataEthDto> {

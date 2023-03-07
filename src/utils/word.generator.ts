@@ -1,5 +1,4 @@
 import {createCanvas, CanvasRenderingContext2D} from 'canvas'
-import * as fs from 'fs'
 
 function drawLine(ctx: CanvasRenderingContext2D, x: number, y: number, width: number, weight: number, color = '#FFFFFF') {
     ctx.strokeStyle = color
@@ -16,7 +15,7 @@ function drawText(ctx: CanvasRenderingContext2D, text: string, x: number, y: num
     ctx.strokeText(text, x - textWidth / 2, y)
 }
 
-export function craftWordNFT(words: { text: string, row: number }[], tokenId: string) {
+export function craftWordNFT(words: { text: string, row: number }[]): Buffer {
     const rowSize = 72
     const fontSize = 48
     const startY = 70
@@ -48,6 +47,5 @@ export function craftWordNFT(words: { text: string, row: number }[], tokenId: st
     })
 
     // Write the image to file
-    const buffer = canvas.toBuffer("image/png")
-    fs.writeFileSync(`./output/${tokenId}.png`, buffer)
+    return canvas.toBuffer("image/png")
 }

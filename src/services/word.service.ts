@@ -1,7 +1,13 @@
 import db from "../db/database"
 import {WordModel} from "../models"
 import Errors from "../utils/errors/Errors"
-import {Filter, throwIfNotNull, throwIfNull} from "@d-lab/api-kit"
+import {eq, Filter, throwIfNull} from "@d-lab/api-kit"
+import {wordSupplyService} from "./index"
+import {WordSupply} from "../interfaces"
+import {craftWordNFT} from "../utils/word.generator"
+import metadataClient from "../clients/metadata.client"
+import {Blockchain} from "@d-lab/metadata"
+import nftConfig from "../config/nft.config"
 
 export default class WordService {
     public async getAll(): Promise<WordModel[]> {
@@ -40,12 +46,44 @@ export default class WordService {
         })
     }
 
-    async reveal(nftId: number): Promise<void> {
-        const word = await this.find(nftId)
-        throwIfNotNull(word, Errors.INVALID_Word(`Word id[${nftId}] is already revealed.`))
-        // TODO check ownership on chain
-        // TODO get a random word
-        // TODO build an image and upload it to ipfs
-        // TODO upload metadata to metadata service
+    async revealAllSupply(): Promise<void> {
+        const lastWord: WordModel | null = await db.Words.findOne({
+            order: [
+                ['id', 'DESC']
+            ]
+        })
+        const lastId = lastWord?.id ?? 1
+        const supply: WordSupply[] = await wordSupplyService.findAll(eq({consumed: false}))
+        const maxId = lastId + supply.length
+
+        for (let i = lastId + 1; i <= maxId; i++) {
+            const pick = Math.floor(Math.random() * supply.length)
+            const word = supply[pick]
+            const position = Math.floor(Math.random() * 5)
+            const image = craftWordNFT([{text: word.word, row: position}])
+            // TODO upload image to ipfs
+            const uploadedImage = ""
+            await metadataClient.token.updateMetadata(
+                {
+                    chainId: Blockchain.ETHEREUM,
+                    collectionAddress: nftConfig.collection.WORD_ADDRESS,
+                    tokenId: i.toString(),
+                }, {
+                    name: `Word ${i}`,
+                    description: `Word ${i}`,
+                    imageUrl:uploadedImage,
+                    externalUrl: "",
+                    animationUrl: "",
+                    properties: {
+                        w1: position == 0 ? word.word : "",
+                        w2: position == 1 ? word.word : "",
+                        w3: position == 2 ? word.word : "",
+                        w4: position == 3 ? word.word : "",
+                        w5: position == 4 ? word.word : "",
+                    }
+                })
+            await this.create(i, null, null)
+            await wordSupplyService.update(word.id, {consumed: true})
+        }
     }
 }
