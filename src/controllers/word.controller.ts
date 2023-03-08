@@ -7,10 +7,6 @@ import nftConfig from "../config/nft.config"
 
 export default class WordController {
 
-    async revealAllSupply(req: AuthRequest): Promise<void> {
-        await wordService.revealAllSupply()
-    }
-
     async metadata(req: PathRequest<GetRequest>) : Promise<MetadataEthDto> {
         const tokenId = req.params.id
         const payload = {

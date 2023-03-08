@@ -2,7 +2,9 @@ node_modules
 dist
 build
 .env
+.env.*
 .idea
 .npmrc
+input
 output
 cache
