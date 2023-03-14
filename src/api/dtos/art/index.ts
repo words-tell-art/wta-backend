@@ -1,6 +1,5 @@
-import GetRequest from "./get.request"
-import RevealRequest from "./reveal.request"
+import ArtGetRequest from "./get.request"
 
 export {
-    GetRequest, RevealRequest
+    ArtGetRequest
 }

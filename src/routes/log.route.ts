@@ -5,11 +5,12 @@ import {handle, validatePathRequest, validateQueryRequest} from "@d-lab/api-kit"
 import LogController from "../controllers/log.controller"
 import authMiddleware from "../middleware/auth.middleware"
 import hasRole from "../middleware/has-role.middleware"
+import {Role} from "@d-lab/sso"
 
 const router = Router()
 const ctrl = new LogController()
 
-router.get(Endpoint.LOG_List, authMiddleware(), hasRole("admin"), validateQueryRequest(ListRequest), handle.bind(ctrl.list))
-router.post(Endpoint.LOG_Get, authMiddleware(), hasRole("admin"), validatePathRequest(GetRequest), handle.bind(ctrl.get))
+router.get(Endpoint.LOG_List, authMiddleware(), hasRole(Role.Moderator), validateQueryRequest(ListRequest), handle.bind(ctrl.list))
+router.post(Endpoint.LOG_Get, authMiddleware(), hasRole(Role.Moderator), validatePathRequest(GetRequest), handle.bind(ctrl.get))
 
 export default router

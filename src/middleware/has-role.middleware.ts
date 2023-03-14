@@ -3,7 +3,7 @@ import {Errors, Role} from "@d-lab/sso"
 import sso from "../clients/sso.client"
 import {Auth, logger, throwIfNull} from "@d-lab/api-kit"
 
-export const hasRole = (role: Role, strict: boolean = false): RequestHandler => {
+export const hasRole = (role: Role, strict = false): RequestHandler => {
     return async (req, res, next) => {
         try {
             const auth = req.auth

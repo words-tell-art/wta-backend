@@ -1,11 +1,11 @@
 import 'dotenv/config'
 import {connectionParams, sequelize} from "./db/database"
 import {logger} from "@d-lab/api-kit"
-import midjourneyClient from "./clients/midjourney.client"
-
-const app = require("./app");
+import app from "./app"
+import MidjourneyClient from "./clients/midjourney.client"
 
 const PORT = process.env.PORT || 4000
+const midjourneyClient = new MidjourneyClient()
 
 app.listen(PORT, () => {
     logger.success(`[server] API is running on port ${PORT}`)
@@ -21,9 +21,6 @@ async function setupDatabase() {
 
 async function startPuppet() {
     await midjourneyClient.start()
-    await midjourneyClient.clickServer("My AI Art")
-    await midjourneyClient.clickChannel("words-tell-art")
-    await midjourneyClient.sendMessage("[wta-backend] ready")
 }
 
 setupDatabase()

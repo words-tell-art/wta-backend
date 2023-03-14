@@ -42,8 +42,8 @@ export function craftWordNFT(words: { text: string, row: number }[]): Buffer {
     // drawLine(ctx, 0, startY + rowSize * 5 + 70, canvas.width, 3)
 
     ctx.font = `${fontSize}px "Bungee Shade"`
-    words.forEach((word, index) => {
-        drawText(ctx, word.text, canvas.width / 2, startY + (word.row * rowSize) + fontSize, colors[index])
+    words.forEach(word => {
+        drawText(ctx, word.text, canvas.width / 2, startY + (word.row * rowSize) + fontSize, colors[word.row])
     })
 
     // Write the image to file
