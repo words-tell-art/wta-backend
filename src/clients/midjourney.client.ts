@@ -8,7 +8,10 @@ export default class MidjourneyClient {
         this.puppet = new MidjourneyPuppet(options(
             discordConfig.DISCORD_USERNAME,
             discordConfig.DISCORD_PASSWORD,
-            discordConfig.DISCORD_USER_DATA_DIR
+            discordConfig.APP_PUPPET_ARGS,
+            discordConfig.DISCORD_USER_DATA_DIR,
+            true,
+            discordConfig.APP_PUPPET_HEADLESS
         ))
     }
 
