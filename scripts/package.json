@@ -5,11 +5,12 @@
   "main": "src/index.ts",
   "scripts": {
     "build": "tsc",
-    "reveal-words": "ts-node src/reveal-words.script.ts"
+    "craft-words": "ts-node src/craft-words.script.ts",
+    "upload-words": "ts-node src/upload-words.script.ts"
   },
   "author": "",
   "dependencies": {
-    "@d-lab/metadata": "^0.2.0",
+    "@d-lab/metadata": "^0.2.3",
     "canvas": "^2.11.0",
     "dotenv": "^16.0.3",
     "files-from-path": "0.2.6",

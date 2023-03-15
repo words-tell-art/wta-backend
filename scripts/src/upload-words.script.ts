@@ -1,15 +1,7 @@
+import 'dotenv/config'
 import {Blockchain, Client as MetadataClient} from "@d-lab/metadata"
-import {filesFromPath} from "files-from-path"
-import {NFTStorage} from "nft.storage"
-import * as path from "path"
 import * as fs from "fs"
-import {craftWordNFT} from "./utils/word.generator"
 import {Auth, Http} from "@d-lab/api-kit"
-
-interface WordSupply {
-    word: string
-    supply: number
-}
 
 interface WordNft {
     id: number
@@ -26,14 +18,12 @@ const config = {
     METADATA_URL: process.env.METADATA_URL!,
     WTA_URL: process.env.WTA_URL!
 }
-const nftStorageClient = new NFTStorage({token: config.STORAGE_API_KEY})
-const metadataClient = new MetadataClient(config.METADATA_URL, config.SSO_API_KEY)
 
 const createWord = async (nftId: number, imageUrl: string, metadataUrl: string) => {
     return new Promise((resolve, reject) => {
         Http.post(
             config.WTA_URL,
-            "/api/words",
+            "/words",
             Auth.apiKey(config.SSO_API_KEY),
             {body: {nftId, imageUrl, metadataUrl}}, (data) => {
                 resolve(data)
@@ -60,66 +50,42 @@ const updateOpensea = async (nftId: number) => {
     })
 }
 
-function buildSupply(file: string): string[] {
-    const input: string = fs.readFileSync(file, 'utf8')
-    const supply: WordSupply[] = input.split("\n").map(line => {
-        const [word, supply] = line.split(",")
-        return {word, supply: parseInt(supply)}
-    })
-    console.log("supply: ", supply)
-    const words: string[] = []
-    supply.forEach(it => {
-        for (let i = 0; i < it.supply; i++) {
-            words.push(it.word)
-        }
-    })
+// const updateMetadata = async (path, body) => {
+//     console.log("path:", path)
+//     return new Promise((resolve, reject) => {
+//         Http.put(config.METADATA_URL, '/metadata/:chainId/:collection/:tokenId',
+//             Auth.apiKey(config.SSO_API_KEY),
+//             {path: path, body: body},
+//             (data) => {
+//                 resolve(data)
+//             },
+//             (error) => {
+//                 reject(error)
+//             })
+//     })
+// }
 
-    return words
-}
 
-function revealWords(startId: number, words: string[], output: string) {
-    let id: number = startId
-
-    const nfts: WordNft[] = []
-    for (let i = 0; i < words.length; i++) {
-        id++
-        const word = words[i]
-        const position = i % 5
-        console.log(`draw ${word} at ${position}`)
-        const image = craftWordNFT([{text: word, row: position}])
-        fs.writeFileSync(`${output}/word_${id}.png`, image)
-        nfts.push({
-            id: id,
-            name: `Word #${id}`,
-            path: `word_${id}.png`,
-            position: position,
-            word: word
-        })
+async function uploadWords(nfts: WordNft[], cid: string) {
+    console.log("config: ", config)
+    const metadataClient = new MetadataClient(config.METADATA_URL, config.SSO_API_KEY)
+    let http
+    if (cid.startsWith("ipfs")) {
+        http = cid.toString().replace("ipfs://", "https://ipfs.io/ipfs/")
+    } else {
+        http = `https://ipfs.io/ipfs/${cid}`
     }
-    return nfts
-}
-
-async function uploadWords(nfts: WordNft[], directory: string) {
-    const files = await filesFromPath(directory, {
-        pathPrefix: path.resolve(directory),
-        hidden: true
-    })
-    const cid = await nftStorageClient.storeDirectory(files)
-    console.log(cid)
-    const status = await nftStorageClient.status(cid)
-    console.log(status)
-    const http = cid.toString().replace("ipfs://", "https://ipfs.io/ipfs/")
     console.log(`nft at ${http}`)
     for (const nft of nfts) {
-        const imageUrl = `${http}/${nft.path}.png`
+        const imageUrl = `${http}/${nft.path}`
         await metadataClient.token.updateMetadata(
             {
                 chainId: Blockchain.ETHEREUM,
-                collectionAddress: config.WORD_ADDRESS,
-                tokenId: nft.id.toString(),
+                collection: config.WORD_ADDRESS,
+                tokenId: nft.id.toString()
             }, {
                 name: nft.name,
-                description: nft.name,
+                description: "A word to be chosen carefully.",
                 imageUrl: imageUrl,
                 externalUrl: "",
                 animationUrl: "",
@@ -140,16 +106,17 @@ async function uploadWords(nfts: WordNft[], directory: string) {
     }
 }
 
-async function run() {
-    console.log("start")
-    const input = "./input/word-supply.csv"
-    const output = "./output"
-    const words = buildSupply(input)
-    console.log("words", words)
-    const nfts = revealWords(0, words, output)
-    await uploadWords(nfts, output)
+async function run(cid: string) {
+    const nfts = JSON.parse(fs.readFileSync("./output/words.json", 'utf8'))
+    console.log("nfts", nfts)
+    await uploadWords(nfts, cid)
 }
 
-run()
+if (process.argv.length < 3) {
+    console.log("Usage: upload-word <ipfs-cid>")
+    process.exit(1)
+}
+
+run(process.argv[2])
     .then()
-    .catch(e => console.log)
+    .catch(e => console.log(e))

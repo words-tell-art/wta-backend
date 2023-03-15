@@ -20,7 +20,7 @@ async function setupDatabase() {
 }
 
 async function startPuppet() {
-    await midjourneyClient.start()
+   // await midjourneyClient.start()
 }
 
 setupDatabase()
