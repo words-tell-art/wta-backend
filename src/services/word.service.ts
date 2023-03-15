@@ -1,7 +1,7 @@
 import db from "../db/database"
 import {WordModel} from "../models"
 import Errors from "../utils/errors/Errors"
-import {Filter, throwIfNull} from "@d-lab/api-kit"
+import {eq, Filter, isNotNull, throwIfNull} from "@d-lab/api-kit"
 
 export default class WordService {
     public async getAll(): Promise<WordModel[]> {
@@ -33,6 +33,10 @@ export default class WordService {
     }
 
     async create(nftId: number, imageUrl: string | null, metadataUrl: string | null): Promise<WordModel> {
+        const exist = await this.findBy(eq({nftId: nftId}))
+        if (isNotNull(exist)) {
+            return exist!
+        }
         return await db.Words.create({
             nftId: nftId,
             imageUrl: imageUrl,
