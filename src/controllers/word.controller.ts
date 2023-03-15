@@ -15,7 +15,7 @@ export default class WordController {
         const tokenId = req.params.id
         const payload = {
             chainId: Blockchain.ETHEREUM,
-            collectionAddress: nftConfig.collection.WORD_ADDRESS,
+            collection: nftConfig.collection.WORD_ADDRESS,
             tokenId: tokenId
         }
         const resp: MetadataEthDto | MetadataImxDto = await metadataClient.token.getMetadata(payload)

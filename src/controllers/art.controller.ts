@@ -9,7 +9,7 @@ export default class ArtController {
         const tokenId = req.params.id
         const payload = {
             chainId: Blockchain.ETHEREUM,
-            collectionAddress: nftConfig.collection.ART_ADDRESS,
+            collection: nftConfig.collection.ART_ADDRESS,
             tokenId: tokenId
         }
         const resp: MetadataEthDto | MetadataImxDto = await metadataClient.token.getMetadata(payload)
