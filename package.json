@@ -1,6 +1,6 @@
 {
   "name": "wta-backend",
-  "version": "0.4.1",
+  "version": "0.5.0",
   "main": "dist/app.js",
   "private": true,
   "license": "MIT",
