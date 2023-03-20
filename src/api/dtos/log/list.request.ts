@@ -1,6 +1,7 @@
-import {isNotEmpty, PageRequest} from "@d-lab/api-kit";
+import {PageRequest} from "@d-lab/api-kit";
 import {IsDateString, IsEnum, IsString, ValidateIf} from "class-validator"
 import {LogEvent, LogScope} from "../../../enums"
+import {isNotEmpty} from "@d-lab/common-kit"
 
 export default class ListRequest extends PageRequest {
     @IsEnum(LogScope)

@@ -1,8 +1,10 @@
+import {MetadataDto} from "@d-lab/metadata"
+
 export default interface Word {
 	id: number
 	nftId: number
-	imageUrl: string | null
-	metadataUrl: string | null
+	word: string
+	metadata: MetadataDto
 	createdAt: Date
 	updatedAt: Date
 }

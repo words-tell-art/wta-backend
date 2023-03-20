@@ -1,18 +1,39 @@
-import {PathRequest} from "@d-lab/api-kit"
-import {ArtGetRequest} from "../api/dtos/art"
-import {MetadataEthDto, MetadataImxDto, Blockchain} from "@d-lab/metadata"
-import nftConfig from "../config/nft.config"
-import metadataClient from "../clients/metadata.client"
+import {AuthBodyPathRequest, AuthBodyRequest, PathRequest} from "@d-lab/api-kit"
+import {artRepo, genealogyRepo} from "../repositories"
+import {artService} from "../services"
+import {ArtCreateRequest, ArtGetRequest, ArtUpdateBodyRequest, ArtUpdatePathRequest} from "../api/dtos/art"
+import ArtDto from "../api/dtos/art/art.dto"
+import {GenealogyDto, GenealogyGetRequest} from "../api/dtos/art/genealogy"
 
 export default class ArtController {
-    async metadata(req: PathRequest<ArtGetRequest>) : Promise<MetadataEthDto> {
-        const tokenId = req.params.id
-        const payload = {
-            chainId: Blockchain.ETHEREUM,
-            collection: nftConfig.collection.ART_ADDRESS,
-            tokenId: tokenId
+    async create(req: AuthBodyRequest<ArtCreateRequest>): Promise<ArtDto> {
+        const payload = req.body
+        return await artService.create(payload.nftId, payload.metadata, payload.parentIds, payload.parentType)
+    }
+
+    async update(req: AuthBodyPathRequest<ArtUpdateBodyRequest, ArtUpdatePathRequest>): Promise<ArtDto> {
+        const payload = req.body
+        const nftId = parseInt(req.params.nftId)
+
+        return await artService.update(nftId, payload.metadata)
+    }
+
+    async get(req: PathRequest<ArtGetRequest>): Promise<ArtDto> {
+        const payload = req.params
+        const art = await artRepo.get(parseInt(payload.id))
+        return {
+            id: art.id,
+            nftId: art.nftId,
+            metadata: art.metadata,
+            parentIds: art.parentIds,
+            parentType: art.parentType,
+            createdAt: art.createdAt,
+            updatedAt: art.updatedAt,
         }
-        const resp: MetadataEthDto | MetadataImxDto = await metadataClient.token.getMetadata(payload)
-        return resp as MetadataEthDto
+    }
+
+    async getGenealogy(req: PathRequest<GenealogyGetRequest>): Promise<GenealogyDto> {
+        const payload = req.params
+        return await genealogyRepo.get(parseInt(payload.nftId))
     }
 }

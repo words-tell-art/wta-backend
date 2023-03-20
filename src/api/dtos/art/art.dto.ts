@@ -1,10 +1,12 @@
+import {TokenType} from "../../../enums"
 import {MetadataDto} from "@d-lab/metadata"
 
-export default interface WordDto {
+export default interface ArtDto {
     id: number
     nftId: number
-    word: string
     metadata: MetadataDto
+    parentIds: number[]
+    parentType: TokenType
     createdAt: Date
     updatedAt: Date
 }

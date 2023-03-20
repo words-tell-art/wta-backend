@@ -1,13 +1,11 @@
 import {IsNumber, IsString} from "class-validator"
-import {SkipNull} from "@d-lab/api-kit"
+import {MetadataRequest} from "@d-lab/metadata"
 
 export default class WordCreateRequest {
     @IsNumber()
     nftId: number
     @IsString()
-    @SkipNull()
-    imageUrl: string | null
+    word: string
     @IsString()
-    @SkipNull()
-    metadataUrl: string | null
+    metadata: MetadataRequest
 }

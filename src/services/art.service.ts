@@ -1,46 +1,44 @@
 import db from "../db/database"
 import {ArtModel} from "../models"
+import {TokenType} from "../enums"
+import {eq} from "@d-lab/api-kit"
 import Errors from "../utils/errors/Errors"
-import {eq, Filter, isNotNull, throwIfNull} from "@d-lab/api-kit"
+import {artRepo} from "../repositories"
+import {merge, throwIfNot} from "@d-lab/common-kit"
+import {MetadataDto, PartialMetadataRequest} from "@d-lab/metadata"
 
 export default class ArtService {
-    public async getAll(): Promise<ArtModel[]> {
-        return await db.Arts.findAll()
-    }
-
-    async findBy(filter: Filter): Promise<ArtModel | null> {
-        return db.Arts.findOne(filter.get())
-    }
-
-    async getBy(filter: Filter): Promise<ArtModel> {
-        const it = await this.findBy(filter)
-        throwIfNull(it, Errors.NOT_FOUND_Art(filter.stringify()))
-        return it!
-    }
-
-    async findAll(filter: Filter): Promise<ArtModel[]> {
-        return db.Arts.findAll(filter.get())
-    }
-
-    async find(id: number): Promise<ArtModel | null> {
-        return db.Arts.findByPk(id)
-    }
-
-    async get(id: number): Promise<ArtModel> {
-        const it = await this.find(id)
-        throwIfNull(it, Errors.NOT_FOUND_Art(`id[${id}`))
-        return it!
-    }
-
-    async create(nftId: number, imageUrl: string | null, metadataUrl: string | null): Promise<ArtModel> {
-        const exist = await this.findBy(eq({nftId: nftId}))
-        if (isNotNull(exist)) {
-            return exist!
+    async create(nftId: number, metadata: MetadataDto, parentIds: number[], parentType: TokenType): Promise<ArtModel> {
+        if (parentType === TokenType.WORD) {
+            throwIfNot(parentIds.length < 5, Errors.INVALID_ART_Craft(`Can only craft Art with 5 words maximum, not ${parentIds.length}.`))
+            return await db.Arts.create({
+                nftId: nftId,
+                metadata: metadata,
+                parentIds: parentIds,
+                parentType: parentType,
+                wordAncestors: parentIds,
+                artAncestors: []
+            })
+        } else {
+            throwIfNot(parentIds.length === 2, Errors.INVALID_ART_Craft(`Can only craft Art from 2 art, not ${parentIds.length}.`))
+            const ancestor1 = await artRepo.getBy(eq({nftId: parentIds[0]}).orderDesc("id"))
+            const ancestor2 = await artRepo.getBy(eq({nftId: parentIds[1]}).orderDesc("id"))
+            return await db.Arts.create({
+                nftId: nftId,
+                metadata: metadata,
+                parentIds: parentIds,
+                parentType: parentType,
+                wordAncestors: [...ancestor1.wordAncestors, ...ancestor2.wordAncestors],
+                artAncestors: [...ancestor1.artAncestors, ...ancestor2.artAncestors]
+            })
         }
-        return await db.Arts.create({
-            nftId: nftId,
-            imageUrl: imageUrl,
-            metadataUrl: metadataUrl
+    }
+
+    async update(nftId: number, metadata: PartialMetadataRequest): Promise<ArtModel> {
+        const art = await artRepo.getBy(eq({nftId: nftId}).orderDesc("id"))
+        await art.update({
+            metadata: merge(art.metadata, metadata)
         })
+        return art
     }
 }

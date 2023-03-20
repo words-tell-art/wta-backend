@@ -1,4 +1,4 @@
-import {Model, DataTypes, Sequelize, Optional} from "sequelize"
+import {DataTypes, Model, Optional, Sequelize} from "sequelize"
 import {Log} from "../interfaces"
 import {LogEvent, LogScope} from "../enums"
 

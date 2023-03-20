@@ -12,13 +12,13 @@ export const up: Migration = async ({context: queryInterface}: { context: QueryI
             allowNull: false,
             type: DataTypes.INTEGER
         },
-        image_url: {
-            allowNull: true,
+        word: {
+            allowNull: false,
             type: DataTypes.STRING
         },
-        metadata_url: {
-            allowNull: true,
-            type: DataTypes.STRING
+        metadata: {
+            allowNull: false,
+            type: DataTypes.JSON
         },
         created_at: {
             allowNull: false,

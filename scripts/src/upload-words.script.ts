@@ -1,7 +1,7 @@
 import 'dotenv/config'
 import {Blockchain, Client as MetadataClient} from "@d-lab/metadata"
 import * as fs from "fs"
-import {Auth, Http} from "@d-lab/api-kit"
+import {Auth, Http} from "@d-lab/common-kit"
 
 interface WordNft {
     id: number
@@ -19,13 +19,13 @@ const config = {
     WTA_URL: process.env.WTA_URL!
 }
 
-const createWord = async (nftId: number, imageUrl: string, metadataUrl: string) => {
+const createWord = async (nftId: number, word: string, metadata) => {
     return new Promise((resolve, reject) => {
         Http.post(
             config.WTA_URL,
             "/words",
             Auth.apiKey(config.SSO_API_KEY),
-            {body: {nftId, imageUrl, metadataUrl}}, (data) => {
+            {body: {nftId, word, metadata}}, (data) => {
                 resolve(data)
             }, (error) => {
                 reject(error)
@@ -50,22 +50,6 @@ const updateOpensea = async (nftId: number) => {
     })
 }
 
-// const updateMetadata = async (path, body) => {
-//     console.log("path:", path)
-//     return new Promise((resolve, reject) => {
-//         Http.put(config.METADATA_URL, '/metadata/:chainId/:collection/:tokenId',
-//             Auth.apiKey(config.SSO_API_KEY),
-//             {path: path, body: body},
-//             (data) => {
-//                 resolve(data)
-//             },
-//             (error) => {
-//                 reject(error)
-//             })
-//     })
-// }
-
-
 async function uploadWords(nfts: WordNft[], cid: string) {
     console.log("config: ", config)
     const metadataClient = new MetadataClient(config.METADATA_URL, config.SSO_API_KEY)
@@ -78,28 +62,29 @@ async function uploadWords(nfts: WordNft[], cid: string) {
     console.log(`nft at ${http}`)
     for (const nft of nfts) {
         const imageUrl = `${http}/${nft.path}`
+        const metadata = {
+            name: nft.name,
+            description: "A word to be chosen carefully.",
+            imageUrl: imageUrl,
+            externalUrl: "",
+            animationUrl: "",
+            properties: {
+                w1: nft.position == 0 ? nft.word : "",
+                w2: nft.position == 1 ? nft.word : "",
+                w3: nft.position == 2 ? nft.word : "",
+                w4: nft.position == 3 ? nft.word : "",
+                w5: nft.position == 4 ? nft.word : "",
+            }
+        }
         await metadataClient.token.updateMetadata(
             {
                 chainId: Blockchain.ETHEREUM,
                 collection: config.WORD_ADDRESS,
                 tokenId: nft.id.toString()
-            }, {
-                name: nft.name,
-                description: "A word to be chosen carefully.",
-                imageUrl: imageUrl,
-                externalUrl: "",
-                animationUrl: "",
-                properties: {
-                    w1: nft.position == 0 ? nft.word : "",
-                    w2: nft.position == 1 ? nft.word : "",
-                    w3: nft.position == 2 ? nft.word : "",
-                    w4: nft.position == 3 ? nft.word : "",
-                    w5: nft.position == 4 ? nft.word : "",
-                }
-            })
+            }, metadata)
         const metadataUrl = `${config.METADATA_URL}/metadata/${Blockchain.ETHEREUM}/${config.WORD_ADDRESS}/${nft.id.toString()}`
         console.log(`metadata updated for ${metadataUrl}`)
-        await createWord(nft.id, imageUrl, metadataUrl)
+        await createWord(nft.id, nft.word, metadata)
         console.log("word created")
         await updateOpensea(nft.id)
         console.log("opensea updated")

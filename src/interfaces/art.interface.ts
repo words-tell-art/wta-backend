@@ -1,8 +1,14 @@
+import {TokenType} from "../enums"
+import {MetadataDto} from "@d-lab/metadata"
+
 export default interface Art {
 	id: number
 	nftId: number
-	imageUrl: string | null
-	metadataUrl: string | null
+	metadata: MetadataDto
+	parentIds: number[]
+	parentType: TokenType
+	wordAncestors: number[]
+	artAncestors: number[]
 	createdAt: Date
 	updatedAt: Date
 }

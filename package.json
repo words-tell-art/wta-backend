@@ -15,7 +15,8 @@
   },
   "dependencies": {
     "@babel/plugin-transform-runtime": "^7.15.8",
-    "@d-lab/api-kit": "^0.5.0",
+    "@d-lab/api-kit": "^0.5.4",
+    "@d-lab/common-kit": "^0.6.0",
     "@d-lab/discord-puppet": "^0.3.1",
     "@d-lab/metadata": "^0.2.5",
     "@d-lab/sso": "^0.4.1",
