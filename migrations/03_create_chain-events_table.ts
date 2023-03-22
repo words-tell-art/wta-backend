@@ -8,29 +8,25 @@ export const up: Migration = async ({context: queryInterface}: { context: QueryI
             primaryKey: true,
             type: DataTypes.INTEGER
         },
-        nft_id: {
+        block_number: {
             allowNull: false,
             type: DataTypes.INTEGER
         },
-        metadata: {
-            allowNull: false,
-            type: DataTypes.JSON
-        },
-        parent_ids: {
-            allowNull: false,
-            type: DataTypes.JSON
-        },
-        parent_type: {
+        event: {
             allowNull: false,
             type: DataTypes.STRING
         },
-        word_ancestors: {
+        arguments: {
             allowNull: false,
             type: DataTypes.JSON
         },
-        art_ancestors: {
+        processed: {
             allowNull: false,
-            type: DataTypes.JSON
+            type: DataTypes.BOOLEAN
+        },
+        processed_by_request: {
+            allowNull: true,
+            type: DataTypes.INTEGER
         },
         created_at: {
             allowNull: false,

@@ -5,6 +5,8 @@ import {init as initLogModel} from "../models/log.model"
 
 import {init as initWordModel} from "../models/word.model"
 import {init as initArtModel} from "../models/art.model"
+import {init as initChainEventModel} from "../models/chain-event.model"
+import {init as initArtRequestModel} from "../models/art-request.model"
 
 export const connectionParams = {
     username: config.username,
@@ -33,6 +35,8 @@ const sequelize = new Sequelize(connectionParams)
 export {sequelize}
 
 const db = {
+	ArtRequests: initArtRequestModel(sequelize),
+	ChainEvents: initChainEventModel(sequelize),
 	Arts: initArtModel(sequelize),
 	Words: initWordModel(sequelize),
     Logs: initLogModel(sequelize)
