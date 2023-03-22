@@ -1,5 +1,6 @@
 import {Model, DataTypes, Sequelize, Optional} from "sequelize"
 import {ArtRequest} from "../interfaces"
+import RequestState from "../enums/request-state.enum"
 
 export type ArtRequestCreationAttributes = Optional<ArtRequest, "id" | "createdAt" | "updatedAt">
 
@@ -7,7 +8,7 @@ export default class ArtRequestModel extends Model<ArtRequest, ArtRequestCreatio
 	public id: number
 	public chainEventId: number
 	public nftId: number
-	public status: number
+	public status: RequestState
 	public imageUrl: string | null
 	public createdAt: Date
 	public updatedAt: Date

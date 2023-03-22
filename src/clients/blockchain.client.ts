@@ -1,5 +1,9 @@
 import blockchainConfig from "../config/blockchain.config"
 import {ethers} from "ethers"
+import {chainEventRepo} from "../repositories"
+import {eq, logger} from "@d-lab/api-kit"
+import {EventName} from "../enums"
+import {chainEventService} from "../services"
 
 export default class BlockchainClient {
     contract: string
@@ -7,45 +11,66 @@ export default class BlockchainClient {
     art: ethers.Contract
 
     constructor() {
-        const contractAbi = [{ /* your contract ABI */}];
-        this.provider = new ethers.AlchemyProvider(blockchainConfig.NETWORK, blockchainConfig.ALCHEMY_API_KEY);
-        this.art = new ethers.Contract(blockchainConfig.CONTRACT_ART_ADDRESS, contractAbi, this.provider);
+        const contractAbi = [{ /* your contract ABI */}]
+        this.provider = new ethers.AlchemyProvider(blockchainConfig.NETWORK, blockchainConfig.ALCHEMY_API_KEY)
+        this.art = new ethers.Contract(blockchainConfig.CONTRACT_ART_ADDRESS, contractAbi, this.provider)
     }
 
     listen() {
-        this.art.on("CraftEvent", (idCraft: number, idBurned: number[], event) => {
-            console.log("CraftEvent emitted:", idCraft, idBurned, event.blockNumber);
-            // TODO: handle the event data
+        this.art.on("CraftEvent", (id: number, idBurned: number[], event) => {
+            chainEventService.create(event.blockNumber, EventName.CRAFT, {
+                id: id,
+                idBurned: idBurned
+            }).then(_ => {
+                logger.debug(`CraftEvent saved: ${id}, ${idBurned}, ${event.blockNumber}`)
+            })
         }).then((contractInstance) => {
-            console.log("Event listener registered on contract instance:", contractInstance.address);
+            logger.success(`[server] CraftEvent Syncer is running [${contractInstance}].`)
         }).catch((error) => {
-            console.error("Error registering event listener:", error);
+            logger.error(`[server] CraftEvent Syncer failed: ${error}`)
         })
-        this.art.on("MergeEvent", (idMerged: number, idBurned: number, event) => {
-            console.log("CraftEvent emitted:", idMerged, idBurned, event.blockNumber);
-            // TODO: handle the event data
+        this.art.on("MergeEvent", (id: number, idBurned: number, event) => {
+            chainEventService.create(event.blockNumber, EventName.MERGE, {
+                id: id,
+                idBurned: idBurned
+            }).then(_ => {
+                logger.debug(`MergeEvent saved: ${id}, ${idBurned}, ${event.blockNumber}`)
+            })
         }).then((contractInstance) => {
-            console.log("Event listener registered on contract instance:", contractInstance.address);
+            logger.success(`[server] MergeEvent Syncer is running [${contractInstance}].`)
         }).catch((error) => {
-            console.error("Error registering event listener:", error);
-        });
+            logger.error(`[server] MergeEvent Syncer failed: ${error}`)
+        })
     }
 
     private async syncCraft() {
-        const filter = this.art.filters.CraftEvent();
-        const events = await this.art.queryFilter(filter, 0, 'latest')
-        // events.forEach((event) => {
-        //     console.log("idCraft:", event.idCraft);
-        //     console.log("idBurned:", event.args.idBurned);
-        //     console.log("address:", event.args._address);
-        //     console.log("blockNumber:", event.blockNumber);
-        // });
+        const last = await chainEventRepo.findBy(eq({event: EventName.CRAFT}).orderDesc("blockNumber"))
+        const filter = this.art.filters.CraftEvent()
+        const events = await this.art.queryFilter(filter, last?.blockNumber || 0, 'latest')
+
+        events.forEach((event) => {
+            logger.info(`sync event: ${JSON.stringify(event)}`)
+            // TODO add events
+            //     chainEventService.create(event.blockNumber, EventName.CRAFT, {
+            //         id: event.args.idCraft,
+            //         idBurned: event.args.idBurned
+            //     })
+        })
     }
 
     private async syncMerge() {
-        const filter = this.art.filters.MergeEvent();
-        const events = await this.art.queryFilter(filter, 0, 'latest')
+        const last = await chainEventRepo.findBy(eq({event: EventName.MERGE}).orderDesc("blockNumber"))
+        const filter = this.art.filters.MergeEvent()
+        const events = await this.art.queryFilter(filter, last?.blockNumber || 0, 'latest')
 
+        events.forEach((event) => {
+            logger.info(`sync event: ${JSON.stringify(event)}`)
+            // TODO add events
+            //     chainEventService.create(event.blockNumber, EventName.MERGE, {
+            //         id: event.args.idCraft,
+            //         idBurned: event.args.idBurned
+            //     })
+        })
     }
 
     async sync() {
