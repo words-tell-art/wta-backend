@@ -18,7 +18,7 @@ export const up: Migration = async ({context: queryInterface}: { context: QueryI
         },
         arguments: {
             allowNull: false,
-            type: DataTypes.JSON
+            type: DataTypes.STRING
         },
         processed: {
             allowNull: false,

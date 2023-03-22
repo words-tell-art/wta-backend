@@ -1,14 +1,15 @@
 import {Model, DataTypes, Sequelize, Optional} from "sequelize"
 import {ChainEvent} from "../interfaces"
 import EventArguments from "../interfaces/event-arguments.interface"
+import {EventName} from "../enums"
 
 export type ChainEventCreationAttributes = Optional<ChainEvent, "id" | "createdAt" | "updatedAt">
 
 export default class ChainEventModel extends Model<ChainEvent, ChainEventCreationAttributes> implements ChainEvent {
 	public id: number
 	public blockNumber: number
-	public event: string
-	public arguments: EventArguments
+	public event: EventName
+	public arguments: string
 	public processed: boolean
 	public processedByRequest: number | null
 	public createdAt: Date
@@ -33,7 +34,7 @@ export const init = (sequelize: Sequelize): typeof ChainEventModel => {
         },
         arguments: {
             allowNull: false,
-            type: DataTypes.JSON
+            type: DataTypes.STRING
         },
         processed: {
             allowNull: false,

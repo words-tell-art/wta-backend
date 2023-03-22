@@ -34,6 +34,18 @@ docker build .
 API documentation can be viewed on
 Link:
 
+## Blockchain
+
+### Testnet - Goerli
+```dotenv
+COLLECTION_WORD_ADDRESS=0x8186b1b1397acd543a990347b01d5ccf29490a66
+COLLECTION_ART_ADDRESS=0xe4A4786956B7643b05642f3c3fE10d9298c65E48
+```
+### Mainnet
+```dotenv
+COLLECTION_WORD_ADDRESS=
+COLLECTION_ART_ADDRESS=
+```
 
 ## Branch Workflow
 

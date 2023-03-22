@@ -5,7 +5,7 @@ export default interface ChainEvent {
 	id: number
 	blockNumber: number
 	event: EventName
-	arguments: EventArguments
+	arguments: string
 	processed: boolean
 	processedByRequest: number | null
 	createdAt: Date

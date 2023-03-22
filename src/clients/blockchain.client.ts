@@ -1,45 +1,36 @@
 import blockchainConfig from "../config/blockchain.config"
-import {ethers} from "ethers"
+import {BigNumber, ethers} from "ethers"
 import {chainEventRepo} from "../repositories"
 import {eq, logger} from "@d-lab/api-kit"
 import {EventName} from "../enums"
 import {chainEventService} from "../services"
+import ArtABI from "../resources/contracts/art-abi"
 
 export default class BlockchainClient {
-    contract: string
-    provider: ethers.AlchemyProvider
+    provider: ethers.providers.AlchemyProvider
     art: ethers.Contract
 
     constructor() {
-        const contractAbi = [{ /* your contract ABI */}]
-        this.provider = new ethers.AlchemyProvider(blockchainConfig.NETWORK, blockchainConfig.ALCHEMY_API_KEY)
-        this.art = new ethers.Contract(blockchainConfig.CONTRACT_ART_ADDRESS, contractAbi, this.provider)
+        this.provider = new ethers.providers.AlchemyProvider(blockchainConfig.NETWORK, blockchainConfig.ALCHEMY_API_KEY)
+        this.art = new ethers.Contract(blockchainConfig.CONTRACT_ART_ADDRESS, ArtABI.abi, this.provider)
     }
 
     listen() {
-        this.art.on("CraftEvent", (id: number, idBurned: number[], event) => {
+        this.art.on(EventName.CRAFT, (id: BigNumber, idBurned: BigNumber[], event) => {
             chainEventService.create(event.blockNumber, EventName.CRAFT, {
-                id: id,
-                idBurned: idBurned
+                id: id.toNumber(),
+                idBurned: idBurned.map(it => it.toNumber())
             }).then(_ => {
                 logger.debug(`CraftEvent saved: ${id}, ${idBurned}, ${event.blockNumber}`)
             })
-        }).then((contractInstance) => {
-            logger.success(`[server] CraftEvent Syncer is running [${contractInstance}].`)
-        }).catch((error) => {
-            logger.error(`[server] CraftEvent Syncer failed: ${error}`)
         })
-        this.art.on("MergeEvent", (id: number, idBurned: number, event) => {
+        this.art.on(EventName.MERGE, (id: BigNumber, idBurned: BigNumber, event) => {
             chainEventService.create(event.blockNumber, EventName.MERGE, {
-                id: id,
-                idBurned: idBurned
+                id: id.toNumber(),
+                idBurned: idBurned.toNumber()
             }).then(_ => {
                 logger.debug(`MergeEvent saved: ${id}, ${idBurned}, ${event.blockNumber}`)
             })
-        }).then((contractInstance) => {
-            logger.success(`[server] MergeEvent Syncer is running [${contractInstance}].`)
-        }).catch((error) => {
-            logger.error(`[server] MergeEvent Syncer failed: ${error}`)
         })
     }
 
@@ -49,12 +40,10 @@ export default class BlockchainClient {
         const events = await this.art.queryFilter(filter, last?.blockNumber || 0, 'latest')
 
         events.forEach((event) => {
-            logger.info(`sync event: ${JSON.stringify(event)}`)
-            // TODO add events
-            //     chainEventService.create(event.blockNumber, EventName.CRAFT, {
-            //         id: event.args.idCraft,
-            //         idBurned: event.args.idBurned
-            //     })
+            chainEventService.create(event.blockNumber, EventName.CRAFT, {
+                id: ((event["args"]![0]) as BigNumber).toNumber(),
+                idBurned: event["args"]![1].map((it: BigNumber) => it.toNumber())
+            })
         })
     }
 
@@ -62,14 +51,11 @@ export default class BlockchainClient {
         const last = await chainEventRepo.findBy(eq({event: EventName.MERGE}).orderDesc("blockNumber"))
         const filter = this.art.filters.MergeEvent()
         const events = await this.art.queryFilter(filter, last?.blockNumber || 0, 'latest')
-
         events.forEach((event) => {
-            logger.info(`sync event: ${JSON.stringify(event)}`)
-            // TODO add events
-            //     chainEventService.create(event.blockNumber, EventName.MERGE, {
-            //         id: event.args.idCraft,
-            //         idBurned: event.args.idBurned
-            //     })
+            chainEventService.create(event.blockNumber, EventName.CRAFT, {
+                id: ((event["args"]![0]) as BigNumber).toNumber(),
+                idBurned: ((event["args"]![1]) as BigNumber).toNumber()
+            })
         })
     }
 

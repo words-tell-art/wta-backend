@@ -1,9 +1,9 @@
 import * as process from "process"
 
 const blockchainConfig = {
-    ALCHEMY_API_KEY: process.env.ALCHMY_API_KEY!,
+    ALCHEMY_API_KEY: process.env.ALCHEMY_API_KEY!,
     NETWORK: process.env.NETWORK!,
-    CONTRACT_ART_ADDRESS: process.env.ART_CONTRACT_ADDRESS!
+    CONTRACT_ART_ADDRESS: process.env.CONTRACT_ART_ADDRESS!
 }
 
 export default blockchainConfig
