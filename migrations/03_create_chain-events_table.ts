@@ -20,14 +20,6 @@ export const up: Migration = async ({context: queryInterface}: { context: QueryI
             allowNull: false,
             type: DataTypes.STRING
         },
-        processed: {
-            allowNull: false,
-            type: DataTypes.BOOLEAN
-        },
-        processed_by_request: {
-            allowNull: true,
-            type: DataTypes.INTEGER
-        },
         created_at: {
             allowNull: false,
             type: DataTypes.DATE

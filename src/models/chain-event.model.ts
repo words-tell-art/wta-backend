@@ -10,8 +10,6 @@ export default class ChainEventModel extends Model<ChainEvent, ChainEventCreatio
 	public blockNumber: number
 	public event: EventName
 	public arguments: string
-	public processed: boolean
-	public processedByRequest: number | null
 	public createdAt: Date
 	public updatedAt: Date
 }
@@ -35,14 +33,6 @@ export const init = (sequelize: Sequelize): typeof ChainEventModel => {
         arguments: {
             allowNull: false,
             type: DataTypes.STRING
-        },
-        processed: {
-            allowNull: false,
-            type: DataTypes.BOOLEAN
-        },
-        processedByRequest: {
-            allowNull: true,
-            type: DataTypes.INTEGER
         },
         createdAt: {
             allowNull: false,

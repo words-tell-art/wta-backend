@@ -1,15 +1,15 @@
-import db from "../db/database"
 import {ArtRequestModel} from "../models"
 import RequestState from "../enums/request-state.enum"
+import {artRequestRepo} from "../repositories"
 
 export default class ArtRequestService {
-    
-    async create(chainEventId: number, nftId: number): Promise<ArtRequestModel> {
-       return await db.ArtRequests.create({
-			chainEventId: chainEventId,
-			nftId: nftId,
-			status: RequestState.CREATED,
-			imageUrl: null
+
+    async processed(id: number, imageUrl: string): Promise<ArtRequestModel> {
+        const request = await artRequestRepo.get(id)
+        await request.update({
+            imageUrl: imageUrl,
+            state: RequestState.PROCESSED
         })
+        return request
     }
 }

@@ -3,8 +3,11 @@ import RequestState from "../enums/request-state.enum"
 export default interface ArtRequest {
 	id: number
 	chainEventId: number
+	blockNumber: number
 	nftId: number
-	status: RequestState
+	inputImage: string | null
+	inputWords: string
+	state: RequestState
 	imageUrl: string | null
 	createdAt: Date
 	updatedAt: Date

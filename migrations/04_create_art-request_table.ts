@@ -12,11 +12,23 @@ export const up: Migration = async ({context: queryInterface}: { context: QueryI
             allowNull: false,
             type: DataTypes.INTEGER
         },
+        block_number: {
+            allowNull: false,
+            type: DataTypes.INTEGER
+        },
         nft_id: {
             allowNull: false,
             type: DataTypes.INTEGER
         },
-        status: {
+        input_image: {
+            allowNull: true,
+            type: DataTypes.STRING
+        },
+        input_words: {
+            allowNull: false,
+            type: DataTypes.STRING
+        },
+        state: {
             allowNull: false,
             type: DataTypes.INTEGER
         },
