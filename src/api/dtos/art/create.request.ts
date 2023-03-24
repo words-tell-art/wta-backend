@@ -1,6 +1,6 @@
-import {IsEnum, IsNumber, IsObject, IsString} from "class-validator"
+import {IsEnum, IsNumber, IsObject} from "class-validator"
 import {TokenType} from "../../../enums"
-import {MetadataRequest} from "@d-lab/metadata"
+import MetadataRequest from "../metadata/metadata.request"
 
 export default class ArtCreateRequest {
     @IsNumber()

@@ -75,7 +75,7 @@ setupDatabase()
 //         logger.success(`[server] MidJourney Puppet is running.`)
 //     }).catch(logger.error)
 
-startChainSyncer()
-    .then(() => {
-        logger.success(`[server] Chain Syncer is running.`)
-    }).catch(logger.error)
+// startChainSyncer()
+//     .then(() => {
+//         logger.success(`[server] Chain Syncer is running.`)
+//     }).catch(logger.error)

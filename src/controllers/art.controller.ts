@@ -13,7 +13,7 @@ export default class ArtController {
 
     async update(req: AuthBodyRequest<ArtUpdateRequest>): Promise<ArtDto> {
         const payload = req.body
-        return await artService.update(parseInt(payload.nftId), payload.metadata)
+        return await artService.update(payload.nftId, payload.metadata)
     }
 
     async get(req: PathRequest<ArtGetRequest>): Promise<ArtDto> {

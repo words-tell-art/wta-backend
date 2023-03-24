@@ -1,9 +1,9 @@
-import {IsNumberString, IsObject} from "class-validator"
-import {PartialMetadataRequest} from "@d-lab/metadata"
+import {IsNumber, IsObject} from "class-validator"
+import PartialMetadataRequest from "../metadata/partial-metadata.request"
 
 export default class WordUpdateRequest {
-    @IsNumberString()
-    nftId: string
+    @IsNumber()
+    nftId: number
     @IsObject()
     metadata: PartialMetadataRequest
 }

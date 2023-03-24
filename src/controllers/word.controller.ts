@@ -12,8 +12,7 @@ export default class WordController {
 
     async update(req: AuthBodyRequest<WordUpdateRequest>): Promise<WordDto> {
         const payload = req.body
-
-        return await wordService.update(parseInt(payload.nftId), payload.metadata)
+        return await wordService.update(payload.nftId, payload.metadata)
     }
 
     async get(req: PathRequest<WordGetRequest>): Promise<WordDto> {
