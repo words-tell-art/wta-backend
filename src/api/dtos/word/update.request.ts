@@ -1,11 +1,9 @@
-import {IsNumberString} from "class-validator"
+import {IsNumberString, IsObject} from "class-validator"
 import {PartialMetadataRequest} from "@d-lab/metadata"
 
-export class WordUpdateBodyRequest {
-    metadata: PartialMetadataRequest
-}
-
-export class WordUpdatePathRequest {
+export default class WordUpdateRequest {
     @IsNumberString()
     nftId: string
+    @IsObject()
+    metadata: PartialMetadataRequest
 }

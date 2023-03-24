@@ -1,7 +1,7 @@
-import {AuthBodyPathRequest, AuthBodyRequest, PathRequest} from "@d-lab/api-kit"
+import {AuthBodyRequest, PathRequest} from "@d-lab/api-kit"
 import {artRepo, genealogyRepo} from "../repositories"
 import {artService} from "../services"
-import {ArtCreateRequest, ArtGetRequest, ArtUpdateBodyRequest, ArtUpdatePathRequest} from "../api/dtos/art"
+import {ArtCreateRequest, ArtGetRequest, ArtUpdateRequest} from "../api/dtos/art"
 import ArtDto from "../api/dtos/art/art.dto"
 import {GenealogyDto, GenealogyGetRequest} from "../api/dtos/art/genealogy"
 
@@ -11,11 +11,9 @@ export default class ArtController {
         return await artService.create(payload.nftId, payload.metadata, payload.parentIds, payload.parentType)
     }
 
-    async update(req: AuthBodyPathRequest<ArtUpdateBodyRequest, ArtUpdatePathRequest>): Promise<ArtDto> {
+    async update(req: AuthBodyRequest<ArtUpdateRequest>): Promise<ArtDto> {
         const payload = req.body
-        const nftId = parseInt(req.params.nftId)
-
-        return await artService.update(nftId, payload.metadata)
+        return await artService.update(parseInt(payload.nftId), payload.metadata)
     }
 
     async get(req: PathRequest<ArtGetRequest>): Promise<ArtDto> {

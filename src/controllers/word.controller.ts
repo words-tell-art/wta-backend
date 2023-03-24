@@ -1,5 +1,5 @@
-import {AuthBodyPathRequest, AuthBodyRequest, Filter, PathRequest, QueryRequest} from "@d-lab/api-kit"
-import {WordCreateRequest, WordDto, WordGetRequest, WordListRequest, WordUpdateBodyRequest, WordUpdatePathRequest} from "../api/dtos/word"
+import {AuthBodyRequest, Filter, PathRequest, QueryRequest} from "@d-lab/api-kit"
+import {WordCreateRequest, WordDto, WordGetRequest, WordListRequest, WordUpdateRequest} from "../api/dtos/word"
 import {wordService} from "../services"
 import {wordRepo} from "../repositories"
 import WordListResponse from "../api/dtos/word/list.response"
@@ -10,11 +10,10 @@ export default class WordController {
         return await wordService.create(payload.nftId, payload.word, payload.metadata)
     }
 
-    async update(req: AuthBodyPathRequest<WordUpdateBodyRequest, WordUpdatePathRequest>): Promise<WordDto> {
+    async update(req: AuthBodyRequest<WordUpdateRequest>): Promise<WordDto> {
         const payload = req.body
-        const nftId = parseInt(req.params.nftId)
 
-        return await wordService.update(nftId, payload.metadata)
+        return await wordService.update(parseInt(payload.nftId), payload.metadata)
     }
 
     async get(req: PathRequest<WordGetRequest>): Promise<WordDto> {
