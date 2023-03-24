@@ -10,6 +10,7 @@ enum Endpoint {
     ART_Get = "/arts/:id",
     ART_GENEALOGY_Get = "/art/genealogy/:nftId",
     ART_REQUEST_List = "/art/requests",
+    ART_REQUEST_Update = "/art/requests/:id",
     CHAIN_EVENT_List = "/chain-events",
 }
 

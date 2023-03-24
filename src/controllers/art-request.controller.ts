@@ -1,7 +1,14 @@
-import {Filter, QueryRequest} from "@d-lab/api-kit"
+import {AuthBodyPathRequest, Filter, QueryRequest} from "@d-lab/api-kit"
 import {artRequestRepo} from "../repositories"
-import {ArtRequestListRequest, ArtRequestListResponse} from "../api/dtos/art-request"
+import {
+    ArtRequestBodyUpdateRequest,
+    ArtRequestDto,
+    ArtRequestListRequest,
+    ArtRequestListResponse,
+    ArtRequestPathUpdateRequest
+} from "../api/dtos/art-request"
 import {toInt, toOptDate} from "@d-lab/common-kit"
+import {artRequestService} from "../services"
 
 export default class ArtRequestController {
     async list(req: QueryRequest<ArtRequestListRequest>): Promise<ArtRequestListResponse> {
@@ -16,5 +23,11 @@ export default class ArtRequestController {
         return {
             requests: requests
         }
+    }
+
+    async processed(req: AuthBodyPathRequest<ArtRequestBodyUpdateRequest, ArtRequestPathUpdateRequest>): Promise<ArtRequestDto> {
+        const payload = req.body
+        const id = parseInt(req.params.id)
+        return await artRequestService.processed(id, payload.imageUrl)
     }
 }
