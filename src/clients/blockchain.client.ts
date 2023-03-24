@@ -63,4 +63,8 @@ export default class BlockchainClient {
         await this.syncCraft()
         await this.syncMerge()
     }
+
+    stop() {
+        this.art.removeAllListeners()
+    }
 }
