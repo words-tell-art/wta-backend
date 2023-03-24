@@ -27,8 +27,10 @@ function buildSupply(file: string): string[] {
             words.push(it.word)
         }
     })
-
     return words
+        .map(value => ({value, sort: Math.random()}))
+        .sort((a, b) => a.sort - b.sort)
+        .map(({value}) => value)
 }
 
 function revealWords(startId: number, words: string[], output: string) {
