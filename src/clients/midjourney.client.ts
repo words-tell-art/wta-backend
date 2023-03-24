@@ -4,7 +4,7 @@ import {artRequestRepo} from "../repositories"
 import {eq, logger} from "@d-lab/api-kit"
 import {artRequestService} from "../services"
 import RequestState from "../enums/request-state.enum"
-import {isNotNull} from "@d-lab/common-kit"
+import {isNotNull, replaceAll} from "@d-lab/common-kit"
 import * as console from "console"
 
 export default class MidjourneyClient {
@@ -45,7 +45,7 @@ export default class MidjourneyClient {
         console.log(requests)
         for (const request of requests) {
             console.log("[req] ", request.id, request.nftId)
-            const cmd = this.getCommand(request.inputImage, request.inputWords)
+            const cmd = this.getCommand(request.inputImage, replaceAll(request.inputWords, ",", " "))
             const result = await this.puppet.imagineLarge(cmd, EnlargeType.U1)
             console.log("[req]: ", result.imageUrl)
             if (isNotNull(result.imageUrl)) {

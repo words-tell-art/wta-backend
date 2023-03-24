@@ -20,14 +20,12 @@ export default class ChainEventService {
         if (isNotNull(exist)) {
             return exist!
         }
-
         return await sequelize.transaction(async (t) => {
             let merge: MergedNFT
             if (event === EventName.CRAFT) {
                 const burned: number[] = args.idBurned as []
-                const ids = [args.id, ...burned]
-                const words = await wordRepo.findAll(include({nftId: ids}))
-                merge = craftArt(words, ids)
+                const words = await wordRepo.findAll(include({nftId: burned}))
+                merge = craftArt(words, burned)
             } else {
                 const burned: number = args.idBurned as number
                 const ids = [args.id, burned]
@@ -44,20 +42,23 @@ export default class ChainEventService {
                 blockNumber: blockNumber,
                 nftId: args.id,
                 inputImage: merge.image,
-                inputWords: merge.words.join(" "),
+                inputWords: merge.words.join(","),
                 state: RequestState.CREATED,
                 imageUrl: null
-            })
+            }, {transaction: t})
             const finalProps = {...merge.properties}
             finalProps.date = numberOfDays(new Date(blockchainConfig.CRAFT_LAUNCH_DATE), new Date())
             finalProps.complexity = merge.words.length
             finalProps.style = merge.words.length > 3 ? "Polychromatic" : "Monochrome"
             finalProps.generation = isNull(finalProps.generation) ? 0 : parseInt(finalProps.generation!.toString()) + 1
+            console.log("update metadata>")
             await metadataClient.token.updateMetadata(
                 {chainId: Blockchain.ETHEREUM, collection: blockchainConfig.CONTRACT_ART_ADDRESS, tokenId: args.id.toString()},
-                {imageUrl: "", animationUrl: blockchainConfig.ART_LOADING_URL, properties: merge.properties, description: undefined, externalUrl: undefined, name: undefined}
+                {imageUrl: "", animationUrl: blockchainConfig.ART_LOADING_URL, properties: finalProps, description: undefined, externalUrl: undefined, name: undefined}
             )
+            console.log("update metadata done, then opensea")
             await Opensea.syncMetadata(blockchainConfig.CONTRACT_ART_ADDRESS, args.id)
+            console.log("update opensea done")
             return it
         })
     }

@@ -1,4 +1,4 @@
-import {isEmpty, merge, throwIfNot} from "@d-lab/common-kit"
+import {isEmpty, merge, throwIf} from "@d-lab/common-kit"
 import Errors from "../errors/Errors"
 import {Art, Word} from "../../interfaces"
 
@@ -9,7 +9,7 @@ export interface MergedNFT {
 }
 
 export function craftArt(words: Word[], ids: number[]): MergedNFT {
-    throwIfNot(words.length < 2, Errors.INVALID_ART_Craft(`ArtCraft: only ${words.length} found from [${JSON.stringify(ids)}].`))
+    throwIf(words.length < 2, Errors.INVALID_ART_Craft(`ArtCraft: only ${words.length} found from [${JSON.stringify(ids)}].`))
     let props = {}
     for (const word of words) {
         props = merge(props, word.metadata.properties)
@@ -28,7 +28,7 @@ export function craftArt(words: Word[], ids: number[]): MergedNFT {
 }
 
 export function mergeArt(arts: Art[], ids: number[]): MergedNFT {
-    throwIfNot(arts.length != 2, Errors.INVALID_ART_Craft(`ArtMerge: one art hasn't been found from [${JSON.stringify(ids)}].`))
+    throwIf(arts.length != 2, Errors.INVALID_ART_Craft(`ArtMerge: one art hasn't been found from [${JSON.stringify(ids)}].`))
     const props = {
         ...arts[0].metadata.properties,
         w1: arts[0].metadata.properties["w1"] || arts[1].metadata.properties["w1"],

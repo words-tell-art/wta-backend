@@ -1,5 +1,6 @@
 import {Http} from "@d-lab/common-kit"
 import blockchainConfig from "../config/blockchain.config"
+import {logger} from "@d-lab/api-kit"
 
 export default class Opensea {
     static async syncMetadata(collectionAddress: string, nftId: number): Promise<unknown> {
@@ -14,7 +15,8 @@ export default class Opensea {
                 }, (data) => {
                     resolve(data)
                 }, (error) => {
-                    reject(error)
+                    logger.error(`[Opensea] can't update metadata for [${nftId}] due to: ${JSON.stringify(error)}`)
+                    resolve(error)
                 })
         })
     }
