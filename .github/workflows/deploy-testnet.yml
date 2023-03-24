@@ -1,12 +1,12 @@
-name: Production CI & CD
+name: Testnet CI & CD
 
 on:
   push:
-    branches: [main]
+    branches: [testnet]
 
 jobs:
   build:
-    name: ci-prod
+    name: ci-testnet
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -25,9 +25,9 @@ jobs:
       - run: npm run test
 
   deploy:
-    name: cd-prod
+    name: cd-testnet
     needs: build
-    environment: production
+    environment: testnet
     runs-on: ubuntu-latest
 
     steps:
@@ -40,8 +40,9 @@ jobs:
           passphrase: ${{ secrets.PRIVATE_PASSPHRASE }}
           port: ${{ secrets.VPS_PORT }}
           script: |
-            cd /home/dlab/apps/wta-backend
-            git pull origin main
+            cd /home/dlab/apps/wta-backend-testnet
+            git checkout testnet
+            git pull
             npm ci
             npm run build --if-present
             echo "" > .env
@@ -67,6 +68,6 @@ jobs:
             echo "DISCORD_USER_DATA_DIR=${{ secrets.DISCORD_USER_DATA_DIR }}" >> .env
             echo "APP_PUPPET_HEADLESS=${{ secrets.APP_PUPPET_HEADLESS }}" >> .env
             echo "APP_PUPPET_ARGS=${{ secrets.APP_PUPPET_ARGS }}" >> .env
-            pm2 stop wta-backend
-            pm2 delete wta-backend
-            pm2 start npm --name "wta-backend" -- start
+            pm2 stop wta-backend-testnet
+            pm2 delete wta-backend-testnet
+            pm2 start npm --name "wta-backend-testnet" -- start
