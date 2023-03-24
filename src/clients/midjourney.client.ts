@@ -5,8 +5,10 @@ import {eq, logger} from "@d-lab/api-kit"
 import {artRequestService} from "../services"
 import RequestState from "../enums/request-state.enum"
 import {isNotNull} from "@d-lab/common-kit"
+import * as console from "console"
 
 export default class MidjourneyClient {
+    running = false
     interval?: NodeJS.Timer
     processing: boolean
     puppet: MidjourneyPuppet
@@ -30,6 +32,7 @@ export default class MidjourneyClient {
         await this.puppet.clickServer("My AI Art")
         await this.puppet.clickChannel("words-tell-art")
         await this.puppet.sendMessage("[wta-backend] ready")
+        this.running = true
     }
 
     private async processRequests() {
@@ -39,13 +42,16 @@ export default class MidjourneyClient {
         }
         this.processing = true
         const requests = await artRequestRepo.findAll(eq({state: RequestState.CREATED}).orderAsc("blockNumber").orderAsc("id"))
-
+        console.log(requests)
         for (const request of requests) {
+            console.log("[req] ", request.id, request.nftId)
             const cmd = this.getCommand(request.inputImage, request.inputWords)
             const result = await this.puppet.imagineLarge(cmd, EnlargeType.U1)
+            console.log("[req]: ", result.imageUrl)
             if (isNotNull(result.imageUrl)) {
                 await artRequestService.processed(request.id, result.imageUrl!)
             }
+            console.log("[req]: done")
         }
     }
 
@@ -58,7 +64,12 @@ export default class MidjourneyClient {
     }
 
     async stop() {
-        clearInterval(this.interval)
-        await this.puppet.shutdown()
+        if (isNotNull(this.interval)) {
+            clearInterval(this.interval)
+        }
+        if (this.running) {
+            await this.puppet.shutdown()
+        }
+        this.running = false
     }
 }

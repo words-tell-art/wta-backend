@@ -1,9 +1,10 @@
 import 'dotenv/config'
-import {connectionParams, sequelize} from "./db/database"
+import {sequelize} from "./db/database"
 import {logger} from "@d-lab/api-kit"
 import app from "./app"
 import MidjourneyClient from "./clients/midjourney.client"
 import BlockchainClient from "./clients/blockchain.client"
+import dbConfig from "./config/db.config"
 
 const PORT = process.env.PORT || 4000
 const midjourneyClient = new MidjourneyClient()
@@ -18,13 +19,13 @@ async function setupDatabase() {
 }
 
 async function startPuppet() {
-    await midjourneyClient.start()
-    await midjourneyClient.listen()
+    // await midjourneyClient.start()
+    // await midjourneyClient.listen()
 }
 
 async function startChainSyncer() {
-    blockchainClient.listen()
-    await blockchainClient.sync()
+    // blockchainClient.listen()
+    // await blockchainClient.sync()
 }
 
 app.listen(PORT, () => {
@@ -65,7 +66,7 @@ process.on('uncaughtException', error => {
  */
 setupDatabase()
     .then(() => {
-        logger.success(`[server] Database is running on ${connectionParams.host}:${connectionParams.port}`)
+        logger.success(`[server] Database is running on ${dbConfig.host}:${dbConfig.port}`)
     })
     .catch(logger.error)
 

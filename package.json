@@ -9,6 +9,7 @@
     "start": "cross-env npm run db:migrate && cross-env node dist/server.js",
     "clean": "rimraf dist",
     "dev": "cross-env NODE_ENV=development npm run db:migrate && cross-env NODE_ENV=development nodemon",
+    "testnet": "cross-env NODE_ENV=development DOTENV_CONFIG_PATH=.env.testnet npm run db:migrate && cross-env NODE_ENV=development DOTENV_CONFIG_PATH=.env.testnet nodemon",
     "quick-dev": "cross-env NODE_ENV=development nodemon",
     "build": "tsc",
     "test": "jest --passWithNoTests"
@@ -16,9 +17,9 @@
   "dependencies": {
     "@babel/plugin-transform-runtime": "^7.15.8",
     "@d-lab/api-kit": "^0.5.5",
-    "@d-lab/common-kit": "^0.6.1",
+    "@d-lab/common-kit": "^0.7.0",
     "@d-lab/discord-puppet": "^0.5.0",
-    "@d-lab/metadata": "^0.2.5",
+    "@d-lab/metadata": "^0.2.7",
     "@d-lab/sso": "^0.4.1",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.0",

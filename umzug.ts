@@ -6,8 +6,6 @@ import {connectionParams} from "./src/db/database";
 
 const sequelize = new Sequelize(connectionParams);
 
-console.info("DB connection params: ", connectionParams);
-
 const umzug = new Umzug({
   migrations: { glob: "migrations/*.ts" },
   context: sequelize.getQueryInterface(),
