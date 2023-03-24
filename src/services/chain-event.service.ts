@@ -3,10 +3,14 @@ import {ChainEventModel} from "../models"
 import EventArguments from "../interfaces/event-arguments.interface"
 import {artRepo, chainEventRepo, wordRepo} from "../repositories"
 import {eq, include} from "@d-lab/api-kit"
-import {isNotNull} from "@d-lab/common-kit"
+import {isNotNull, isNull, numberOfDays} from "@d-lab/common-kit"
 import {EventName} from "../enums"
 import RequestState from "../enums/request-state.enum"
 import {craftArt, mergeArt, MergedNFT} from "../utils/nft/merge.rule"
+import metadataClient from "../clients/metadata.client"
+import {Blockchain} from "@d-lab/metadata"
+import blockchainConfig from "../config/blockchain.config"
+import Opensea from "../clients/opensea.client"
 
 export default class ChainEventService {
 
@@ -44,6 +48,16 @@ export default class ChainEventService {
                 state: RequestState.CREATED,
                 imageUrl: null
             })
+            const finalProps = {...merge.properties}
+            finalProps.date = numberOfDays(new Date(blockchainConfig.CRAFT_LAUNCH_DATE), new Date())
+            finalProps.complexity = merge.words.length
+            finalProps.style = merge.words.length > 3 ? "Polychromatic" : "Monochrome"
+            finalProps.generation = isNull(finalProps.generation) ? 0 : parseInt(finalProps.generation!.toString()) + 1
+            await metadataClient.token.updateMetadata(
+                {chainId: Blockchain.ETHEREUM, collection: blockchainConfig.CONTRACT_ART_ADDRESS, tokenId: args.id.toString()},
+                {imageUrl: "", animationUrl: blockchainConfig.ART_LOADING_URL, properties: merge.properties, description: undefined, externalUrl: undefined, name: undefined}
+            )
+            await Opensea.syncMetadata(blockchainConfig.CONTRACT_ART_ADDRESS, args.id)
             return it
         })
     }
