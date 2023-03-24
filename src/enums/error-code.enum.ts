@@ -5,7 +5,9 @@ enum ErrorCode {
     NOT_FOUND_ChainEvent,
     NOT_FOUND_ArtRequest,
     INVALID_Word = 400200,
-    INVALID_ART_Craft
+    INVALID_ART_Craft,
+    REQUIRE_Token = 403400,
+    REQUIRE_Role,
 }
 
 export default ErrorCode
