@@ -27,7 +27,6 @@ jobs:
   deploy:
     name: cd-prod
     needs: build
-    environment: production
     runs-on: ubuntu-latest
 
     steps:

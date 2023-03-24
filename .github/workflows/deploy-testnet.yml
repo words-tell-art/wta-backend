@@ -27,7 +27,6 @@ jobs:
   deploy:
     name: cd-testnet
     needs: build
-    environment: testnet
     runs-on: ubuntu-latest
 
     steps:
@@ -48,7 +47,7 @@ jobs:
             echo "" > .env
             echo "PORT=${{ secrets.APP_PORT }}" >> .env
             echo "MYSQL_HOST=${{ secrets.MYSQL_HOST }}" >> .env
-            echo "MYSQL_DB_NAME=${{ secrets.MYSQL_DB_NAME }}" >> .env
+            echo "MYSQL_DB_NAME=${{ secrets.MYSQL_DB_NAME_TEST }}" >> .env
             echo "MYSQL_USER=${{ secrets.MYSQL_USER }}" >> .env
             echo "MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }}" >> .env
             echo "MYSQL_PORT=${{ secrets.MYSQL_PORT }}" >> .env
@@ -57,12 +56,12 @@ jobs:
             echo "SSO_ENDPOINT=${{ secrets.SSO_ENDPOINT }}" >> .env
             echo "METADATA_URL=${{ secrets.METADATA_URL }}" >> .env
             echo "STORAGE_API_KEY=${{ secrets.STORAGE_API_KEY }}" >> .env
-            echo "ALCHEMY_API_KEY=${{ secrets.ALCHEMY_API_KEY }}" >> .env
-            echo "ETH_NETWORK=${{ secrets.ETH_NETWORK }}" >> .env
-            echo "CONTRACT_ART_ADDRESS=${{ secrets.CONTRACT_ART_ADDRESS }}" >> .env
-            echo "CRAFT_LAUNCH_DATE=${{ secrets.CRAFT_LAUNCH_DATE }}" >> .env
+            echo "ALCHEMY_API_KEY=${{ secrets.ALCHEMY_API_KEY_TEST }}" >> .env
+            echo "ETH_NETWORK=${{ secrets.ETH_NETWORK_TEST }}" >> .env
+            echo "CONTRACT_ART_ADDRESS=${{ secrets.CONTRACT_ART_ADDRESS_TEST }}" >> .env
+            echo "CRAFT_LAUNCH_DATE=${{ secrets.CRAFT_LAUNCH_DATE_TEST }}" >> .env
             echo "ART_LOADING_URL=${{ secrets.ART_LOADING_URL }}" >> .env
-            echo "OPENSEA_DOMAIN=${{ secrets.OPENSEA_DOMAIN }}" >> .env
+            echo "OPENSEA_DOMAIN=${{ secrets.OPENSEA_DOMAIN_TEST }}" >> .env
             echo "DISCORD_USERNAME=${{ secrets.DISCORD_USERNAME }}" >> .env
             echo "DISCORD_PASSWORD=${{ secrets.DISCORD_PASSWORD }}" >> .env
             echo "DISCORD_USER_DATA_DIR=${{ secrets.DISCORD_USER_DATA_DIR }}" >> .env
