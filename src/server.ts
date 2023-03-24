@@ -19,13 +19,13 @@ async function setupDatabase() {
 }
 
 async function startPuppet() {
-    // await midjourneyClient.start()
-    // await midjourneyClient.listen()
+    await midjourneyClient.start()
+    await midjourneyClient.listen()
 }
 
 async function startChainSyncer() {
-    // blockchainClient.listen()
-    // await blockchainClient.sync()
+    blockchainClient.listen()
+    await blockchainClient.sync()
 }
 
 app.listen(PORT, () => {
@@ -70,10 +70,10 @@ setupDatabase()
     })
     .catch(logger.error)
 
-startPuppet()
-    .then(() => {
-        logger.success(`[server] MidJourney Puppet is running.`)
-    }).catch(logger.error)
+// startPuppet()
+//     .then(() => {
+//         logger.success(`[server] MidJourney Puppet is running.`)
+//     }).catch(logger.error)
 
 startChainSyncer()
     .then(() => {
