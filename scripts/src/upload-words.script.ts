@@ -25,7 +25,7 @@ const createWord = async (nftId: number, word: string, metadata) => {
             config.WTA_URL,
             "/words",
             Auth.apiKey(config.SSO_API_KEY),
-            {body: {nftId, word, metadata}}, (data) => {
+            {path: {nftId: nftId.toString()}, body: {metadata}}, (data) => {
                 resolve(data)
             }, (error) => {
                 reject(error)
