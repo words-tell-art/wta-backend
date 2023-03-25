@@ -38,25 +38,26 @@ export default class BlockchainClient {
         const last = await chainEventRepo.findBy(eq({event: EventName.CRAFT}).orderDesc("blockNumber"))
         const filter = this.art.filters.CraftEvent()
         const events = await this.art.queryFilter(filter, last?.blockNumber || 0, 'latest')
-
-        events.forEach((event) => {
-            chainEventService.create(event.blockNumber, EventName.CRAFT, {
+        const sorted = events.sort((a, b)=> a.blockNumber - b.blockNumber)
+        for (const event of sorted) {
+            await chainEventService.create(event.blockNumber, EventName.CRAFT, {
                 id: ((event["args"]![0]) as BigNumber).toNumber(),
                 idBurned: event["args"]![1].map((it: BigNumber) => it.toNumber())
             })
-        })
+        }
     }
 
     private async syncMerge() {
         const last = await chainEventRepo.findBy(eq({event: EventName.MERGE}).orderDesc("blockNumber"))
         const filter = this.art.filters.MergeEvent()
         const events = await this.art.queryFilter(filter, last?.blockNumber || 0, 'latest')
-        events.forEach((event) => {
-            chainEventService.create(event.blockNumber, EventName.CRAFT, {
+        const sorted = events.sort((a, b)=> a.blockNumber - b.blockNumber)
+        for (const event of sorted) {
+            await chainEventService.create(event.blockNumber, EventName.CRAFT, {
                 id: ((event["args"]![0]) as BigNumber).toNumber(),
                 idBurned: ((event["args"]![1]) as BigNumber).toNumber()
             })
-        })
+        }
     }
 
     async sync() {

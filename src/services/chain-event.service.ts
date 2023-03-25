@@ -51,14 +51,11 @@ export default class ChainEventService {
             finalProps.complexity = merge.words.length
             finalProps.style = merge.words.length > 3 ? "Polychromatic" : "Monochrome"
             finalProps.generation = isNull(finalProps.generation) ? 0 : parseInt(finalProps.generation!.toString()) + 1
-            console.log("update metadata>")
             await metadataClient.token.updateMetadata(
                 {chainId: Blockchain.ETHEREUM, collection: blockchainConfig.CONTRACT_ART_ADDRESS, tokenId: args.id.toString()},
                 {imageUrl: "", animationUrl: blockchainConfig.ART_LOADING_URL, properties: finalProps, description: undefined, externalUrl: undefined, name: undefined}
             )
-            console.log("update metadata done, then opensea")
             await Opensea.syncMetadata(blockchainConfig.CONTRACT_ART_ADDRESS, args.id)
-            console.log("update opensea done")
             return it
         })
     }
