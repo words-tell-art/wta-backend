@@ -3,7 +3,7 @@ import {ChainEventModel} from "../models"
 import EventArguments from "../interfaces/event-arguments.interface"
 import {artRepo, chainEventRepo, wordRepo} from "../repositories"
 import {eq, include} from "@d-lab/api-kit"
-import {isNotNull, isNull, numberOfDays} from "@d-lab/common-kit"
+import {isNotEmpty, isNotNull, isNull, numberOfDays} from "@d-lab/common-kit"
 import {EventName} from "../enums"
 import RequestState from "../enums/request-state.enum"
 import {craftArt, mergeArt, MergedNFT} from "../utils/nft/merge.rule"
@@ -49,7 +49,7 @@ export default class ChainEventService {
             const finalProps = {...merge.properties}
             finalProps.date = numberOfDays(new Date(blockchainConfig.CRAFT_LAUNCH_DATE), new Date())
             finalProps.complexity = merge.words.length
-            finalProps.style = merge.words.length > 3 ? "Polychromatic" : "Monochrome"
+            finalProps.style = merge.words.filter(isNotEmpty).length > 3 ? "Polychromatic" : "Monochrome"
             finalProps.generation = isNull(finalProps.generation) ? 0 : parseInt(finalProps.generation!.toString()) + 1
             await metadataClient.token.updateMetadata(
                 {chainId: Blockchain.ETHEREUM, collection: blockchainConfig.CONTRACT_ART_ADDRESS, tokenId: args.id.toString()},
