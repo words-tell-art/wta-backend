@@ -8,6 +8,7 @@ interface WordNft {
     name: string
     word: string
     position: number
+    color: { key: string, value: string }
     path: string
 }
 
@@ -74,6 +75,7 @@ async function uploadWords(nfts: WordNft[], cid: string) {
                 w3: nft.position == 2 ? nft.word : "",
                 w4: nft.position == 3 ? nft.word : "",
                 w5: nft.position == 4 ? nft.word : "",
+                hue: nft.color.key
             }
         }
         await metadataClient.token.updateMetadata(
@@ -93,7 +95,6 @@ async function uploadWords(nfts: WordNft[], cid: string) {
 
 async function run(cid: string) {
     const nfts = JSON.parse(fs.readFileSync("./output/words.json", 'utf8'))
-    console.log("nfts", nfts)
     await uploadWords(nfts, cid)
 }
 

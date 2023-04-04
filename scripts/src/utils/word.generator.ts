@@ -15,17 +15,10 @@ function drawText(ctx: CanvasRenderingContext2D, text: string, x: number, y: num
     ctx.strokeText(text, x - textWidth / 2, y)
 }
 
-export function craftWordNFT(words: { text: string, row: number }[]): Buffer {
+export function craftWordNFT(words: { text: string, row: number, color: string }[]): Buffer {
     const rowSize = 72
     const fontSize = 48
     const startY = 70
-    const colors = [
-        "#00FF66",
-        "#BD00FF",
-        "#FF3D00",
-        "#FAFF00",
-        "#00C2FF"
-    ]
     const canvas = createCanvas(500, 500)
     const ctx = canvas.getContext('2d')
     // fill the canvas with black color
@@ -43,7 +36,7 @@ export function craftWordNFT(words: { text: string, row: number }[]): Buffer {
 
     ctx.font = `${fontSize}px "Bungee Shade"`
     words.forEach(word => {
-        drawText(ctx, word.text, canvas.width / 2, startY + (word.row * rowSize) + fontSize, colors[word.row])
+        drawText(ctx, word.text, canvas.width / 2, startY + (word.row * rowSize) + fontSize, word.color)
     })
 
     // Write the image to file
