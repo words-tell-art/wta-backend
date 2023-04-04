@@ -1,10 +1,11 @@
-import {AuthBodyRequest, eq, PathRequest} from "@d-lab/api-kit"
+import {AuthBodyRequest, eq, PathRequest, QueryRequest} from "@d-lab/api-kit"
 import {artRepo, artRequestRepo, genealogyRepo} from "../repositories"
 import {artService} from "../services"
 import {ArtCreateRequest, ArtGetRequest, ArtIsProcessingRequest, ArtIsProcessingResponse, ArtUpdateRequest} from "../api/dtos/art"
 import ArtDto from "../api/dtos/art/art.dto"
 import {GenealogyDto, GenealogyGetRequest} from "../api/dtos/art/genealogy"
 import {isNotNull} from "@d-lab/common-kit"
+import RequestState from "../enums/request-state.enum"
 
 export default class ArtController {
     async create(req: AuthBodyRequest<ArtCreateRequest>): Promise<ArtDto> {
@@ -36,11 +37,17 @@ export default class ArtController {
         return await genealogyRepo.get(parseInt(payload.nftId))
     }
 
-    async isProcessing(req: PathRequest<ArtIsProcessingRequest>): Promise<ArtIsProcessingResponse> {
-        const nftId = parseInt(req.params.nftId)
-        const last = await artRequestRepo.findBy(eq({"nftId": nftId}).orderDesc("blockNumber"))
+    async isProcessing(req: QueryRequest<ArtIsProcessingRequest>): Promise<ArtIsProcessingResponse> {
+        const nftId = parseInt(req.query.nftId)
+        let filter = eq({"nftId": nftId})
+        if (isNotNull(req.query.blockNumber)) {
+            filter = filter.equals({"blockNumber": parseInt(req.query.blockNumber!)})
+        } else {
+            filter = filter.orderDesc("blockNumber")
+        }
+        const artRequest = await artRequestRepo.findBy(filter)
         return {
-            processing: isNotNull(last)
+            processing: !(isNotNull(artRequest) && artRequest!.state === RequestState.CREATED)
         }
     }
 }

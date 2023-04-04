@@ -1,6 +1,6 @@
 import {Router} from "express"
 import {Endpoint} from "../enums"
-import {handle, validatePathRequest, validateRequest} from "@d-lab/api-kit"
+import {handle, validatePathRequest, validateQueryRequest, validateRequest} from "@d-lab/api-kit"
 import {ArtCreateRequest, ArtGetRequest, ArtIsProcessingRequest, ArtUpdateRequest} from "../api/dtos/art"
 import ArtController from "../controllers/art.controller"
 import authMiddleware from "../middleware/auth.middleware"
@@ -15,7 +15,7 @@ router.post(Endpoint.ART_Create, authMiddleware(), hasRole(Role.Moderator), vali
 router.put(Endpoint.ART_Update, authMiddleware(), hasRole(Role.Moderator), validateRequest(ArtUpdateRequest), handle.bind(ctrl.update))
 router.get(Endpoint.ART_Get, validatePathRequest(ArtGetRequest), handle.bind(ctrl.get))
 router.get(Endpoint.ART_GENEALOGY_Get, validatePathRequest(GenealogyGetRequest), handle.bind(ctrl.getGenealogy))
-router.get(Endpoint.ART_IsProcessing, validatePathRequest(ArtIsProcessingRequest), handle.bind(ctrl.isProcessing))
+router.get(Endpoint.ART_IsProcessing, validateQueryRequest(ArtIsProcessingRequest), handle.bind(ctrl.isProcessing))
 
 
 export default router
