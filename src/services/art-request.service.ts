@@ -21,11 +21,7 @@ export default class ArtRequestService {
                 {chainId: Blockchain.ETHEREUM, collection: blockchainConfig.CONTRACT_ART_ADDRESS, tokenId: request.nftId.toString()},
                 {
                     imageUrl: imageUrl,
-                    animationUrl: "",
-                    properties: undefined,
-                    description: undefined,
-                    externalUrl: undefined,
-                    name: undefined
+                    animationUrl: ""
                 }
             )
             await Opensea.syncMetadata(blockchainConfig.CONTRACT_ART_ADDRESS, request.nftId)

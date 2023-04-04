@@ -4,7 +4,7 @@ import EventArguments from "../interfaces/event-arguments.interface"
 import {artRepo, chainEventRepo, wordRepo} from "../repositories"
 import {eq, include} from "@d-lab/api-kit"
 import {isNotEmpty, isNotNull, isNull, numberOfDays} from "@d-lab/common-kit"
-import {EventName} from "../enums"
+import {ColorStyle, EventName} from "../enums"
 import RequestState from "../enums/request-state.enum"
 import {craftArt, mergeArt, MergedNFT} from "../utils/nft/merge.rule"
 import metadataClient from "../clients/metadata.client"
@@ -32,6 +32,12 @@ export default class ChainEventService {
                 const arts = await artRepo.findAll(include({nftId: ids}))
                 merge = mergeArt(arts, ids)
             }
+            const finalProps = {...merge.properties}
+            finalProps.date = numberOfDays(new Date(blockchainConfig.CRAFT_LAUNCH_DATE), new Date())
+            finalProps.complexity = merge.words.length
+            finalProps.style = merge.words.filter(isNotEmpty).length > 3 ? ColorStyle.POLYCHROMATIC : ColorStyle.MONOCHROME
+            finalProps.generation = isNull(finalProps.generation) ? 0 : parseInt(finalProps.generation!.toString()) + 1
+
             const it = await db.ChainEvents.create({
                 blockNumber: blockNumber,
                 event: event,
@@ -43,14 +49,10 @@ export default class ChainEventService {
                 nftId: args.id,
                 inputImage: merge.image,
                 inputWords: merge.words.join(","),
+                inputHues: finalProps.style === ColorStyle.MONOCHROME ? null : merge.hues.join(","),
                 state: RequestState.CREATED,
                 imageUrl: null
             }, {transaction: t})
-            const finalProps = {...merge.properties}
-            finalProps.date = numberOfDays(new Date(blockchainConfig.CRAFT_LAUNCH_DATE), new Date())
-            finalProps.complexity = merge.words.length
-            finalProps.style = merge.words.filter(isNotEmpty).length > 3 ? "Polychromatic" : "Monochrome"
-            finalProps.generation = isNull(finalProps.generation) ? 0 : parseInt(finalProps.generation!.toString()) + 1
             await metadataClient.token.updateMetadata(
                 {chainId: Blockchain.ETHEREUM, collection: blockchainConfig.CONTRACT_ART_ADDRESS, tokenId: args.id.toString()},
                 {imageUrl: "", animationUrl: blockchainConfig.ART_LOADING_URL, properties: finalProps, description: undefined, externalUrl: undefined, name: undefined}

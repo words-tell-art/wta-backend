@@ -7,6 +7,7 @@ export default interface ArtRequest {
 	nftId: number
 	inputImage: string | null
 	inputWords: string
+	inputHues: string | null
 	state: RequestState
 	imageUrl: string | null
 	createdAt: Date

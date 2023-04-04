@@ -11,6 +11,7 @@ export default class ArtRequestModel extends Model<ArtRequest, ArtRequestCreatio
     public nftId: number
     public inputImage: string | null
     public inputWords: string
+    public inputHues: string | null
     public state: RequestState
     public imageUrl: string | null
     public createdAt: Date
@@ -43,6 +44,10 @@ export const init = (sequelize: Sequelize): typeof ArtRequestModel => {
             },
             inputWords: {
                 allowNull: false,
+                type: DataTypes.STRING
+            },
+            inputHues: {
+                allowNull: true,
                 type: DataTypes.STRING
             },
             state: {

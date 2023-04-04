@@ -28,6 +28,10 @@ export const up: Migration = async ({context: queryInterface}: { context: QueryI
             allowNull: false,
             type: DataTypes.STRING
         },
+        input_hues: {
+            allowNull: true,
+            type: DataTypes.STRING
+        },
         state: {
             allowNull: false,
             type: DataTypes.INTEGER

@@ -1,4 +1,4 @@
-import {MidjourneyPuppet, options, EnlargeType} from "@d-lab/discord-puppet"
+import {EnlargeType, MidjourneyPuppet, options} from "@d-lab/discord-puppet"
 import discordConfig from "../config/discord.config"
 import {artRequestRepo} from "../repositories"
 import {eq, logger} from "@d-lab/api-kit"
@@ -45,7 +45,11 @@ export default class MidjourneyClient {
         console.log(requests)
         for (const request of requests) {
             console.log("[req] ", request.id, request.nftId)
-            const cmd = this.getCommand(request.inputImage, replaceAll(request.inputWords, ",", " "))
+            const cmd = this.getCommand(
+                request.inputImage,
+                request.inputWords,
+                request.inputHues
+            )
             const result = await this.puppet.imagineLarge(cmd, EnlargeType.U1)
             console.log("[req]: ", result.imageUrl)
             if (isNotNull(result.imageUrl)) {
@@ -55,8 +59,13 @@ export default class MidjourneyClient {
         }
     }
 
-    private getCommand(image: string | null, words: string): string {
-        return `${image + " " || "" }cyberpunk, ${words}, film noir, colourful, minimal environment`
+    private getCommand(image: string | null, inputWords: string, inputHues: string | null): string {
+        const words = replaceAll(inputWords, ",", " ").replace(/\s+/g, " ")
+        let colors = "monochrome"
+        if (isNotNull(inputHues)) {
+            colors = `colorful with ${inputHues!.replace(",", " and ")} dominant color`
+        }
+        return `${image + " " || ""}style cyberpunk of ${words}, film noir, minimal environment, ${colors} --no frame`
     }
 
     async listen() {

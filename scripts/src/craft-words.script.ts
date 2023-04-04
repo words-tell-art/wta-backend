@@ -1,5 +1,6 @@
 import * as fs from "fs"
 import {craftWordNFT} from "./utils/word.generator"
+import {colorRarity, colors} from "./utils/colors"
 
 interface WordSupply {
     word: string
@@ -20,23 +21,11 @@ interface WordNft {
     path: string
 }
 
-const colors = {
-    green: "#00FF66",
-    purple: "#BD00FF",
-    red: "#FF3D00",
-    yellow: "#FAFF00",
-    blue: "#00C2FF"
-}
-
-const rarity = [
-    20, 40, 50, 80, 100
-]
-
 function getRandomColor(): {key: string, value: string} {
     const keys = Object.keys(colors)
     const random = Math.floor(Math.random() * 100)
     let index = 0
-    while (random > rarity[index]) {
+    while (random > colorRarity[index]) {
         index++
     }
     return {key: keys[index], value: colors[keys[index]]}
