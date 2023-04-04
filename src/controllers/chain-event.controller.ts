@@ -1,7 +1,8 @@
-import {Filter, QueryRequest} from "@d-lab/api-kit"
+import {AuthRequest, Filter, QueryRequest} from "@d-lab/api-kit"
 import {chainEventRepo} from "../repositories"
 import {toInt, toOptDate} from "@d-lab/common-kit"
 import {ChainEventListRequest, ChainEventListResponse} from "../api/dtos/chain-event"
+import {chainEventService} from "../services"
 
 export default class ChainEventController {
     async list(req: QueryRequest<ChainEventListRequest>): Promise<ChainEventListResponse> {
@@ -13,6 +14,13 @@ export default class ChainEventController {
             .lt({createdAt: toOptDate(payload.createdBefore)})
 
         const events = await chainEventRepo.findAll(filter)
+        return {
+            events: events
+        }
+    }
+
+    async syncArtRequests(_: AuthRequest): Promise<ChainEventListResponse> {
+        const events = await chainEventService.syncArtRequests()
         return {
             events: events
         }

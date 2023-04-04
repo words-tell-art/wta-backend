@@ -3,11 +3,13 @@ import Errors from "../errors/Errors"
 import {Art, Word} from "../../interfaces"
 import {hexToRgb, RGB} from "../colors"
 
+export type MetadataProps = { [key: string]: string | number | boolean | Date | undefined }
+
 export interface MergedNFT {
     image: string | null
     words: string[]
     hues: string[]
-    properties: { [key: string]: string | number | boolean | Date | undefined }
+    properties: MetadataProps
 }
 
 export function mergeColors(colors: string[]): RGB | null {

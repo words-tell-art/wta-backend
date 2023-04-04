@@ -12,6 +12,7 @@ enum Endpoint {
     ART_REQUEST_List = "/art/requests",
     ART_REQUEST_Update = "/art/requests/:id",
     CHAIN_EVENT_List = "/chain-events",
+    CHAIN_EVENT_SyncArtRequest = "/chain-events/sync-art-requests"
 }
 
 export default Endpoint

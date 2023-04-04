@@ -1,7 +1,7 @@
 import blockchainConfig from "../config/blockchain.config"
 import {BigNumber, ethers} from "ethers"
 import {chainEventRepo} from "../repositories"
-import {eq, logger} from "@d-lab/api-kit"
+import {eq, extractError, logger} from "@d-lab/api-kit"
 import {EventName} from "../enums"
 import {chainEventService} from "../services"
 import ArtABI from "../resources/contracts/art-abi"
@@ -22,6 +22,8 @@ export default class BlockchainClient {
                 idBurned: idBurned.map(it => it.toNumber())
             }).then(_ => {
                 logger.debug(`CraftEvent saved: ${id}, ${idBurned}, ${event.blockNumber}`)
+            }).catch(e => {
+                logger.error(extractError(e))
             })
         })
         this.art.on(EventName.MERGE, (id: BigNumber, idBurned: BigNumber, event) => {
@@ -30,6 +32,8 @@ export default class BlockchainClient {
                 idBurned: idBurned.toNumber()
             }).then(_ => {
                 logger.debug(`MergeEvent saved: ${id}, ${idBurned}, ${event.blockNumber}`)
+            }).catch(e => {
+                logger.error(extractError(e))
             })
         })
     }
@@ -38,7 +42,7 @@ export default class BlockchainClient {
         const last = await chainEventRepo.findBy(eq({event: EventName.CRAFT}).orderDesc("blockNumber"))
         const filter = this.art.filters.CraftEvent()
         const events = await this.art.queryFilter(filter, last?.blockNumber || 0, 'latest')
-        const sorted = events.sort((a, b)=> a.blockNumber - b.blockNumber)
+        const sorted = events.sort((a, b) => a.blockNumber - b.blockNumber)
         for (const event of sorted) {
             await chainEventService.create(event.blockNumber, EventName.CRAFT, {
                 id: ((event["args"]![0]) as BigNumber).toNumber(),
@@ -51,7 +55,7 @@ export default class BlockchainClient {
         const last = await chainEventRepo.findBy(eq({event: EventName.MERGE}).orderDesc("blockNumber"))
         const filter = this.art.filters.MergeEvent()
         const events = await this.art.queryFilter(filter, last?.blockNumber || 0, 'latest')
-        const sorted = events.sort((a, b)=> a.blockNumber - b.blockNumber)
+        const sorted = events.sort((a, b) => a.blockNumber - b.blockNumber)
         for (const event of sorted) {
             await chainEventService.create(event.blockNumber, EventName.CRAFT, {
                 id: ((event["args"]![0]) as BigNumber).toNumber(),
