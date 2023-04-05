@@ -16,13 +16,11 @@ export function mergeColors(colors: string[]): RGB | null {
     let result: RGB | null = null
     for (const color of colors) {
         const hex = colorHex[color]
-        console.log(color, hex)
         if (result === null) {
             result = hexToRgb(hex)
         } else {
             result.add(hexToRgb(hex))
         }
-        console.log(result)
     }
     return result
 }
