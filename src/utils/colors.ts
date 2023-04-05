@@ -1,4 +1,4 @@
-export const colors = {
+export const colorHex = {
     green: "#00FF66",
     blue: "#00C2FF",
     purple: "#BD00FF",
