@@ -13,7 +13,8 @@ interface WordNft {
 }
 
 const config = {
-    SSO_API_KEY: process.env.SSO_API_KEY!,
+    METADATA_API_KEY: process.env.METADATA_API_KEY!,
+    WTA_API_KEY: process.env.WTA_API_KEY!,
     STORAGE_API_KEY: process.env.STORAGE_API_KEY!,
     WORD_ADDRESS: process.env.WORD_ADDRESS!,
     METADATA_URL: process.env.METADATA_URL!,
@@ -25,7 +26,7 @@ const createWord = async (nftId: number, word: string, metadata) => {
         Http.post(
             config.WTA_URL,
             "/words",
-            Auth.apiKey(config.SSO_API_KEY),
+            Auth.apiKey(config.WTA_API_KEY),
             {body: {nftId, word, metadata}}, (data) => {
                 resolve(data)
             }, (error) => {
@@ -53,7 +54,7 @@ const updateOpensea = async (nftId: number) => {
 
 async function uploadWords(nfts: WordNft[], cid: string) {
     console.log("config: ", config)
-    const metadataClient = new MetadataClient(config.METADATA_URL, config.SSO_API_KEY)
+    const metadataClient = new MetadataClient(config.METADATA_URL, config.METADATA_API_KEY)
     let http
     if (cid.startsWith("ipfs")) {
         http = cid.toString().replace("ipfs://", "https://ipfs.io/ipfs/")
@@ -75,7 +76,8 @@ async function uploadWords(nfts: WordNft[], cid: string) {
                 w3: nft.position == 2 ? nft.word : "",
                 w4: nft.position == 3 ? nft.word : "",
                 w5: nft.position == 4 ? nft.word : "",
-                hue: nft.color.key
+                hue: nft.color.key,
+                initial : nft.word.slice(0, 1).toUpperCase()
             }
         }
         await metadataClient.token.updateMetadata(
@@ -93,16 +95,16 @@ async function uploadWords(nfts: WordNft[], cid: string) {
     }
 }
 
-async function run(cid: string) {
-    const nfts = JSON.parse(fs.readFileSync("./output/words.json", 'utf8'))
+async function run(cid: string, version: string) {
+    const nfts = JSON.parse(fs.readFileSync(`./output/${version}/words.json`, 'utf8'))
     await uploadWords(nfts, cid)
 }
 
-if (process.argv.length < 3) {
-    console.log("Usage: upload-word <ipfs-cid>")
+if (process.argv.length < 4) {
+    console.log("Usage: upload-word <ipfs-cid> <ipfs-version>")
     process.exit(1)
 }
 
-run(process.argv[2])
+run(process.argv[2], process.argv[3])
     .then()
     .catch(e => console.log(e))
