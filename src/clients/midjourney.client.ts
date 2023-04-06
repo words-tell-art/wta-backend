@@ -59,11 +59,18 @@ export default class MidjourneyClient {
         }
     }
 
+    private cleanInput(input: string): string {
+        return replaceAll(input, ",", " ")
+            .replace(/\s+/g, " ")
+            .trim()
+    }
+
     private getCommand(image: string | null, inputWords: string, inputHues: string | null): string {
-        const words = replaceAll(inputWords, ",", " ").replace(/\s+/g, " ")
+        const words = this.cleanInput(inputWords)
+        const hues = isNotNull(inputHues) ? this.cleanInput(inputHues!).replace(" ", " and ") : null
         let colors = "monochrome"
-        if (isNotNull(inputHues)) {
-            colors = `colorful with ${inputHues!.replace(",", " and ")} dominant color`
+        if (isNotNull(hues)) {
+            colors = `colorful with ${hues!} dominant color`
         }
         return `${image + " " || ""}style cyberpunk of ${words}, film noir, minimal environment, ${colors} --no frame`
     }
