@@ -2,6 +2,7 @@ import {isEmpty, merge, throwIf} from "@d-lab/common-kit"
 import Errors from "../errors/Errors"
 import {Art, Word} from "../../interfaces"
 import {colorHex, hexToRgb, RGB} from "../colors"
+import * as console from "console"
 
 export type MetadataProps = { [key: string]: string | number | boolean | Date | undefined }
 
@@ -28,13 +29,16 @@ export function mergeColors(colors: string[]): RGB | null {
 export function craftArt(words: Word[], ids: number[]): MergedNFT {
     throwIf(words.length < 2, Errors.INVALID_ART_Craft(`ArtCraft: only ${words.length} found from [${JSON.stringify(ids)}].`))
     let props = {}
-    console.log("11")
     for (const word of words) {
-        props = merge(props, word.metadata.properties)
+        props = merge(props, {
+            w1: word.metadata.properties.w1,
+            w2: word.metadata.properties.w2,
+            w3: word.metadata.properties.w3,
+            w4: word.metadata.properties.w4,
+            w5: word.metadata.properties.w5
+        }, true)
     }
-    console.log("12")
     const hues = words.map(word => word.metadata.properties.hue)
-    console.log("13", mergeColors(hues))
     if (hues.length < 4) {
         props["hue1"] = mergeColors(hues)?.hue()
         props["hue2"] = ""
