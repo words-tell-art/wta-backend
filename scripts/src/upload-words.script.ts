@@ -97,7 +97,7 @@ async function uploadWords(nfts: WordNft[], cid: string) {
 }
 
 async function run(cid: string, version: string) {
-    const nfts = JSON.parse(fs.readFileSync(`./output/${version}/words.json`, 'utf8'))
+    const nfts: WordNft[] = JSON.parse(fs.readFileSync(`./output/${version}/words.json`, 'utf8'))
     await uploadWords(nfts, cid)
 }
 
