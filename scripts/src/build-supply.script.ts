@@ -30,7 +30,7 @@ function mergeToExisting(supply: Supply[]): Supply[] {
     const existingMap: Map<string, number> = new Map()
     existing.forEach(it => existingMap.set(it.word, it.supply))
     supply.forEach(it => {
-        existingMap.set(it.word, it.supply)
+        existingMap.set(it.word.charAt(0).toUpperCase() + it.word.slice(1), it.supply)
     })
     return [...existingMap.entries()].map(([word, supply]) => ({word, supply}))
 }
