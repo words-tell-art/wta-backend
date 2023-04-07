@@ -76,7 +76,7 @@ function revealWords(startId: number, words: WordRequest[], output: string): Wor
 
 async function run(startId: number, version: number) {
     console.log("start craft")
-    const input = "./input/word-supply.csv"
+    const input = "./input/words-supply.csv"
     const output = `./output/${version}/words`
     fs.mkdirSync(output, {recursive: true})
     const words = buildSupply(input)

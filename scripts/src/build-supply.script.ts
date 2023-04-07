@@ -33,23 +33,25 @@ function mergeToExisting(supply: Supply[]): Supply[] {
             .split("\n")
             .forEach(line => {
                 const [word, supply] = line.split(",")
-                existing.push({word, supply: parseInt(supply)})
+                if (word) {
+                    existing.push({word, supply: parseInt(supply)})
+                }
             })
     }
     const existingMap: Map<string, number> = new Map()
     existing.forEach(it => existingMap.set(it.word, it.supply))
     supply.forEach(it => {
-        if (!banned.includes(it.word.toLowerCase())) {
+        if (it.word && !banned.includes(it.word.toLowerCase())) {
             existingMap.set(it.word.charAt(0).toUpperCase() + it.word.slice(1), it.supply)
         }
     })
     return [...existingMap.entries()].map(([word, supply]) => ({word, supply}))
 }
 
-async function run(file) {
+async function run(file, quantity: number) {
     const input = `./input/words/${file}.txt`
     const content: string = fs.readFileSync(input, 'utf8')
-    const supply: Supply[] = buildSupply(content, 5)
+    const supply: Supply[] = buildSupply(content, quantity)
     const result = mergeToExisting(supply)
     const csv = toCSV(result)
     fs.writeFileSync(`./input/words-supply.csv`, csv)
@@ -60,6 +62,6 @@ if (process.argv.length < 3) {
     process.exit(1)
 }
 
-run(process.argv[2])
+run(process.argv[2], process.argv[3] ? parseInt(process.argv[3]) : 5)
     .then()
     .catch(e => console.log(e))

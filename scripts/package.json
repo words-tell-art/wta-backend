@@ -5,6 +5,7 @@
   "main": "src/index.ts",
   "scripts": {
     "build": "tsc",
+    "clean-input": "ts-node src/clean-input.script.ts",
     "build-supply": "ts-node src/build-supply.script.ts",
     "craft-words": "ts-node src/craft-words.script.ts",
     "upload-words": "ts-node src/upload-words.script.ts"
