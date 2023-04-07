@@ -47,7 +47,7 @@ export default class ArtController {
         }
         const artRequest = await artRequestRepo.findBy(filter)
         return {
-            processing: !(isNotNull(artRequest) && artRequest!.state === RequestState.CREATED)
+            processing: isNotNull(artRequest) && artRequest!.state === RequestState.CREATED
         }
     }
 }
