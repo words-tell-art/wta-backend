@@ -47,7 +47,8 @@ const updateOpensea = async (nftId: number) => {
             }, (data) => {
                 resolve(data)
             }, (error) => {
-                reject(error)
+                console.error("opensea: ", error)
+                resolve(error)
             })
     })
 }
