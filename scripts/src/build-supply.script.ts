@@ -56,7 +56,7 @@ async function run(file) {
 }
 
 if (process.argv.length < 3) {
-    console.log("Usage: craft-word <startId><version>")
+    console.log("Usage: build-supply <file>")
     process.exit(1)
 }
 
