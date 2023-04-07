@@ -17,8 +17,17 @@ function buildSupply(data: string, quantity: number): Supply[] {
 
 function mergeToExisting(supply: Supply[]): Supply[] {
     const existingInput = "./input/words-supply.csv"
-    const existingSupply = fs.existsSync(existingInput)
+    const existingSupply: boolean = fs.existsSync(existingInput)
+    const existingBanned: boolean = fs.existsSync("./input/banned-words.txt")
     const existing: Supply[] = []
+    const banned: string[] = []
+    if (existingBanned) {
+        fs.readFileSync("./input/banned-words.txt", 'utf8')
+            .split("\n")
+            .forEach(word => {
+                banned.push(word.replace(/(\r\n|\n|\r)/gm, "").toLowerCase())
+            })
+    }
     if (existingSupply) {
         fs.readFileSync(existingInput, 'utf8')
             .split("\n")
@@ -30,7 +39,9 @@ function mergeToExisting(supply: Supply[]): Supply[] {
     const existingMap: Map<string, number> = new Map()
     existing.forEach(it => existingMap.set(it.word, it.supply))
     supply.forEach(it => {
-        existingMap.set(it.word.charAt(0).toUpperCase() + it.word.slice(1), it.supply)
+        if (!banned.includes(it.word.toLowerCase())) {
+            existingMap.set(it.word.charAt(0).toUpperCase() + it.word.slice(1), it.supply)
+        }
     })
     return [...existingMap.entries()].map(([word, supply]) => ({word, supply}))
 }
