@@ -72,7 +72,7 @@ export default class MidjourneyClient {
         if (isNotNull(hues)) {
             colors = `colorful with ${hues!} dominant color`
         }
-        return `${image + " " || ""}style cyberpunk of ${words}, film noir, minimal environment, ${colors} --no frame`
+        return `${image + " " || ""} ${words}::2 style cyberpunk::1.2 film noir, minimal environment, ${colors} --no frame`
     }
 
     async listen() {
