@@ -3,8 +3,8 @@ import {ChainEventModel} from "../models"
 import EventArguments from "../interfaces/event-arguments.interface"
 import {artRepo, chainEventRepo, wordRepo} from "../repositories"
 import {eq, extractError, include, logger} from "@d-lab/api-kit"
-import {isNotEmpty, isNotNull, isNull, numberOfDays} from "@d-lab/common-kit"
-import {ColorStyle, EventName} from "../enums"
+import {isEmpty, isNotEmpty, isNotNull, isNull, numberOfDays, throwIf} from "@d-lab/common-kit"
+import {ColorStyle, EventName, LogEvent, LogScope} from "../enums"
 import RequestState from "../enums/request-state.enum"
 import {craftArt, mergeArt, MergedNFT, MetadataProps} from "../utils/nft/merge.rule"
 import metadataClient from "../clients/metadata.client"
@@ -12,6 +12,8 @@ import {Blockchain} from "@d-lab/metadata"
 import blockchainConfig from "../config/blockchain.config"
 import Opensea from "../clients/opensea.client"
 import {QueryTypes} from "sequelize"
+import {logService} from "./index"
+import Errors from "../utils/errors/Errors"
 
 export default class ChainEventService {
 
@@ -30,7 +32,9 @@ export default class ChainEventService {
             const nftProps = await this.generateArtRequest(it.id, blockNumber, event, args)
             await this.updateArtMetadata(it.id, nftProps)
         } catch (e) {
-            logger.error(extractError(e))
+            const error = extractError(e)
+            logger.error(error)
+            await logService.create(LogScope.ART_REQUEST, LogEvent.CREATE, "", error)
         }
         return it
     }
