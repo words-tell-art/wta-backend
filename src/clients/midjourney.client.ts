@@ -37,7 +37,7 @@ export default class MidjourneyClient {
 
     private async processRequests() {
         if (this.processing) {
-            logger.debug('[Midjourney] Skipping execution - previous run still in progress')
+            logger.info('[Midjourney] Skipping execution - previous run still in progress')
             return
         }
         this.processing = true
@@ -57,6 +57,7 @@ export default class MidjourneyClient {
             }
             console.log("[req]: done")
         }
+        this.processing = false
     }
 
     private cleanInput(input: string): string {
