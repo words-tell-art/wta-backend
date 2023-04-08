@@ -68,7 +68,7 @@ export default class MidjourneyClient {
     private getCommand(image: string | null, inputWords: string, inputHues: string | null): string {
         const words = this.cleanInput(inputWords)
         const hues = isNotNull(inputHues) ? this.cleanInput(inputHues!).replace(" ", " and ") : null
-        let colors = "monochrome"
+        let colors = "monochrome only black and white"
         if (isNotNull(hues)) {
             colors = `colorful with ${hues!} dominant color`
         }
