@@ -8,13 +8,13 @@ export const colorHex = {
 }
 
 export const colorHue = [
-    {name: 'green', range: [30, 90]},
-    {name: 'blue', range: [90, 150]},
-    {name: 'purple', range: [150, 210]},
-    {name: 'red', range: [210, 270]},
-    {name: 'orange', range: [270, 330]},
-    {name: 'yellow', range: [330, 360]},
-    {name: 'yellow', range: [0, 30]},
+    {name: 'orange', range: [15, 45]},
+    {name: 'yellow', range: [45, 80]},
+    {name: 'green', range: [75, 165]},
+    {name: 'blue', range: [165, 265]},
+    {name: 'purple', range: [265, 340]},
+    {name: 'red', range: [340, 360]},
+    {name: 'red', range: [0, 15]},
 ]
 
 export const colorRarity = [
@@ -28,9 +28,21 @@ export class RGB {
     }
 
     add(color: RGB): RGB {
-        this.r = (this.r + color.r) / 2
-        this.g = (this.g + color.g) / 2
-        this.b = (this.b + color.b) / 2
+        const hsl1 = rgbToHsl(this.r, this.g, this.b)
+        const hsl2 = rgbToHsl(color.r, color.g, color.b)
+        let h1 = hsl1[0]
+        let h2 = hsl2[0]
+
+        if (h1 > 0.5 && h2 < 0.04) {
+            h2 = 0.97
+        } else if (h2 > 0.5 && h1 < 0.04) {
+            h1 = 0.97
+        }
+        const newH = (h1 + h2) / 2
+        const newColor = hslToRgb(newH, hsl1[1], hsl1[2])
+        this.r = newColor[0]
+        this.g = newColor[1]
+        this.b = newColor[2]
         return this
     }
 
@@ -86,4 +98,27 @@ export function rgbToHsl(r, g, b) {
     }
 
     return [h, s, l]
+}
+
+function hslToRgb(h, s, l) {
+    let r, g, b
+
+    if (s == 0) {
+        r = g = b = l
+    } else {
+        const hue2rgb = function hue2rgb(p, q, t) {
+            if (t < 0) t += 1
+            if (t > 1) t -= 1
+            if (t < 1 / 6) return p + (q - p) * 6 * t
+            if (t < 1 / 2) return q
+            if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6
+            return p
+        }
+        const q = l < 0.5 ? l * (1 + s) : l + s - l * s
+        const p = 2 * l - q
+        r = hue2rgb(p, q, h + 1 / 3)
+        g = hue2rgb(p, q, h)
+        b = hue2rgb(p, q, h - 1 / 3)
+    }
+    return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)]
 }
