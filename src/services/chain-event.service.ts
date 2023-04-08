@@ -30,7 +30,7 @@ export default class ChainEventService {
         })
         try {
             const nftProps = await this.generateArtRequest(it.id, blockNumber, event, args)
-            await this.updateArtMetadata(it.id, nftProps)
+            await this.updateArtMetadata(args.id, nftProps)
         } catch (e) {
             const error = extractError(e)
             logger.error(error)
@@ -48,8 +48,9 @@ export default class ChainEventService {
                 mapToModel: true
             })
         for (const it of pending) {
-            const nftProps = await this.generateArtRequest(it.id, it.blockNumber, it.event, JSON.parse(it.arguments))
-            await this.updateArtMetadata(it.id, nftProps)
+            const args: EventArguments = JSON.parse(it.arguments)
+            const nftProps = await this.generateArtRequest(it.id, it.blockNumber, it.event, args)
+            await this.updateArtMetadata(args.id, nftProps)
         }
         return pending
     }
