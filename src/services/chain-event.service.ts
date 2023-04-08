@@ -95,7 +95,7 @@ export default class ChainEventService {
                 properties: finalProps,
                 description: undefined,
                 externalUrl: undefined,
-                name: undefined
+                name: `Words Tell Art #${nftId}`
             }
         )
         await Opensea.syncMetadata(blockchainConfig.CONTRACT_ART_ADDRESS, nftId)
