@@ -1,4 +1,4 @@
-import {AuthBodyPathRequest, Filter, QueryRequest} from "@d-lab/api-kit"
+import {AuthBodyPathRequest, AuthPathRequest, Filter, QueryRequest} from "@d-lab/api-kit"
 import {artRequestRepo} from "../repositories"
 import {
     ArtRequestBodyUpdateRequest,
@@ -23,6 +23,11 @@ export default class ArtRequestController {
         return {
             requests: requests
         }
+    }
+
+    async reset(req: AuthPathRequest<ArtRequestPathUpdateRequest>): Promise<ArtRequestDto> {
+        const id = parseInt(req.params.id)
+        return await artRequestService.reset(id)
     }
 
     async processed(req: AuthBodyPathRequest<ArtRequestBodyUpdateRequest, ArtRequestPathUpdateRequest>): Promise<ArtRequestDto> {

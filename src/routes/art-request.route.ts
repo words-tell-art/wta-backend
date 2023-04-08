@@ -11,6 +11,7 @@ const router = Router()
 const ctrl = new ArtRequestController()
 
 router.get(Endpoint.ART_REQUEST_List, validateQueryRequest(ArtRequestListRequest), handle.bind(ctrl.list))
-router.put(Endpoint.ART_REQUEST_Update, authMiddleware(), hasRole(Role.Moderator),validatePathRequest(ArtRequestPathUpdateRequest), validateRequest(ArtRequestBodyUpdateRequest), handle.bind(ctrl.processed))
+router.put(Endpoint.ART_REQUEST_Reset, authMiddleware(), hasRole(Role.Moderator),validatePathRequest(ArtRequestPathUpdateRequest), handle.bind(ctrl.reset))
+router.put(Endpoint.ART_REQUEST_Process, authMiddleware(), hasRole(Role.Moderator),validatePathRequest(ArtRequestPathUpdateRequest), validateRequest(ArtRequestBodyUpdateRequest), handle.bind(ctrl.processed))
 
 export default router

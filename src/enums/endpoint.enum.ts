@@ -11,7 +11,8 @@ enum Endpoint {
     ART_IsProcessing = "/art/is-processing",
     ART_GENEALOGY_Get = "/art/genealogy/:nftId",
     ART_REQUEST_List = "/art/requests",
-    ART_REQUEST_Update = "/art/requests/:id",
+    ART_REQUEST_Process = "/art/requests/:id/process",
+    ART_REQUEST_Reset = "/art/requests/:id/reset",
     CHAIN_EVENT_List = "/chain-events",
     CHAIN_EVENT_SyncArtRequest = "/chain-events/sync-art-requests"
 }
