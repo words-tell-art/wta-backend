@@ -100,7 +100,7 @@ export function rgbToHsl(r, g, b) {
     return [h, s, l]
 }
 
-function hslToRgb(h, s, l) {
+export function hslToRgb(h, s, l) {
     let r, g, b
 
     if (s == 0) {
