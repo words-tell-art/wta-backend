@@ -10,7 +10,7 @@ export default class BlockchainClient {
     provider: ethers.providers.AlchemyProvider
     art: ethers.Contract
 
-    constructor() {
+    setup() {
         this.provider = new ethers.providers.AlchemyProvider(blockchainConfig.NETWORK, blockchainConfig.ALCHEMY_API_KEY)
         this.art = new ethers.Contract(blockchainConfig.CONTRACT_ART_ADDRESS, ArtABI.abi, this.provider)
     }

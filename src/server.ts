@@ -5,6 +5,8 @@ import app from "./app"
 import MidjourneyClient from "./clients/midjourney.client"
 import BlockchainClient from "./clients/blockchain.client"
 import dbConfig from "./config/db.config"
+import {isNotEmpty} from "@d-lab/common-kit"
+import blockchainConfig from "./config/blockchain.config"
 
 const PORT = process.env.PORT || 4000
 const midjourneyClient = new MidjourneyClient()
@@ -24,8 +26,13 @@ async function startPuppet() {
 }
 
 async function startChainSyncer() {
-    blockchainClient.listen()
-    await blockchainClient.sync()
+    if (isNotEmpty(blockchainConfig.CONTRACT_ART_ADDRESS)) {
+        blockchainClient.setup()
+        blockchainClient.listen()
+        await blockchainClient.sync()
+        return true
+    }
+    return false
 }
 
 app.listen(PORT, () => {
@@ -76,6 +83,10 @@ setupDatabase()
 //     }).catch(logger.error)
 
 startChainSyncer()
-    .then(() => {
-        logger.success(`[server] Chain Syncer is running.`)
+    .then(success => {
+        if (success) {
+            logger.success(`[server] Chain Syncer is running.`)
+        } else {
+            logger.error(`[server] Chain Syncer is not running.`)
+        }
     }).catch(logger.error)
