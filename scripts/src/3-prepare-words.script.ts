@@ -12,15 +12,6 @@ interface WordRequest {
     position: number
 }
 
-interface WordNft {
-    id: number
-    name: string
-    word: string
-    position: number
-    color: {key: string, value: string}
-    path: string
-}
-
 function getRandomColor(): {key: string, value: string} {
     const keys = Object.keys(colorHex)
     const random = Math.floor(Math.random() * 100)
@@ -53,50 +44,22 @@ function buildSupply(file: string): WordRequest[] {
         .map(({value}) => value)
 }
 
-function revealWords(startId: number, words: WordRequest[], output: string): WordNft[] {
-    let id: number = startId
-
-    const nfts: WordNft[] = []
-    for (let i = 0; i < words.length; i++) {
-        id++
-        const word = words[i]
-        const image = craftWordNFT([{text: word.word, row: word.position, color: word.color.value}])
-        fs.writeFileSync(`${output}/word_${id}.png`, image)
-        nfts.push({
-            id: id,
-            name: `Words Tell Art #${id}`,
-            path: `word_${id}.png`,
-            position: word.position,
-            word: word.word,
-            color: word.color
-        })
-    }
-    return nfts
-}
-
-async function run(startId: number, version: number) {
-    console.log("start craft")
+async function run(version: number) {
     const input = "./input/words-supply.csv"
-    const output = `./output/${version}/words`
+    const output = `./input/${version}`
     fs.mkdirSync(output, {recursive: true})
     const words = buildSupply(input)
-    fs.writeFileSync(`./output/${version}/words_supply.json`, JSON.stringify(words))
-    const nfts = revealWords(0, words, output)
-    console.log("nfts", nfts)
-    fs.writeFileSync(`./output/${version}/words.json`, JSON.stringify(nfts))
+    fs.writeFileSync(`${output}/words_supply.json`, JSON.stringify(words))
 }
 
-let startId = 0
 let version = 1
 if (process.argv.length === 3) {
-    startId = parseInt(process.argv[2])
-} else if (process.argv.length === 4) {
-    version = parseInt(process.argv[3])
+    version = parseInt(process.argv[2])
 } else {
-    console.log("Usage: craft-word <startId><version>")
+    console.log("Usage: prepare-word <version>")
     process.exit(1)
 }
 
-run(startId, version)
+run(version)
     .then()
     .catch(e => console.log(e))

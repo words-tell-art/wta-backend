@@ -5,10 +5,11 @@
   "main": "src/index.ts",
   "scripts": {
     "build": "tsc",
-    "clean-input": "ts-node src/clean-input.script.ts",
-    "build-supply": "ts-node src/build-supply.script.ts",
-    "craft-words": "ts-node src/craft-words.script.ts",
-    "upload-words": "ts-node src/upload-words.script.ts"
+    "clean-input": "ts-node src/1-clean-input.script.ts",
+    "add-supply": "ts-node src/2-add-supply.script.ts",
+    "prepare-words": "ts-node src/3-prepare-words.script.ts",
+    "draw-words": "ts-node src/4-draw-words.script.ts",
+    "upload-words": "ts-node src/5-upload-words.script.ts"
   },
   "author": "",
   "dependencies": {

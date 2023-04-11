@@ -58,7 +58,7 @@ async function run(file, quantity: number) {
 }
 
 if (process.argv.length < 3) {
-    console.log("Usage: build-supply <file>")
+    console.log("Usage: add-supply <file>")
     process.exit(1)
 }
 
