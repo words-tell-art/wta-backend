@@ -1,4 +1,4 @@
-import {AuthBodyRequest, Filter, PathRequest, QueryRequest} from "@d-lab/api-kit"
+import {AuthBodyRequest, eq, Page, PathRequest, QueryRequest} from "@d-lab/api-kit"
 import {WordCreateRequest, WordDto, WordGetRequest, WordListRequest, WordUpdateRequest} from "../api/dtos/word"
 import {wordService} from "../services"
 import {wordRepo} from "../repositories"
@@ -22,11 +22,13 @@ export default class WordController {
 
     async list(req: QueryRequest<WordListRequest>): Promise<WordListResponse> {
         const payload = req.query
-        const filter = new Filter()
-        filter.equals({word: payload.word})
+        const page = Page.from(payload)
+        const filter = eq({word: payload.word})
+            .paginate(page)
         const words = await wordRepo.findAll(filter)
         return {
-            words: words
+            words: words,
+            ...page.result(words)
         }
     }
 }

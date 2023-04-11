@@ -1,6 +1,8 @@
 import {IsString} from "class-validator"
+import {PageRequest, SkipNull} from "@d-lab/api-kit"
 
-export default class WordListRequest {
+export default class WordListRequest extends PageRequest {
     @IsString()
-    word: string
+    @SkipNull()
+    word: string | null
 }
