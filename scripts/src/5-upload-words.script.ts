@@ -18,7 +18,8 @@ const config = {
     STORAGE_API_KEY: process.env.STORAGE_API_KEY!,
     WORD_ADDRESS: process.env.WORD_ADDRESS!,
     METADATA_URL: process.env.METADATA_URL!,
-    WTA_URL: process.env.WTA_URL!
+    WTA_URL: process.env.WTA_URL!,
+    OPENSEA_URL: process.env.OPENSEA_URL!
 }
 
 const createWord = async (nftId: number, word: string, metadata) => {
@@ -28,8 +29,10 @@ const createWord = async (nftId: number, word: string, metadata) => {
             "/words",
             Auth.apiKey(config.WTA_API_KEY),
             {body: {nftId, word, metadata}}, (data) => {
+                console.log("word created")
                 resolve(data)
             }, (error) => {
+                console.error("word error: ", error)
                 reject(error)
             })
     })
@@ -38,13 +41,14 @@ const createWord = async (nftId: number, word: string, metadata) => {
 const updateOpensea = async (nftId: number) => {
     return new Promise((resolve, reject) => {
         Http.get(
-            "https://testnets-api.opensea.io/api/v1",
+            config.OPENSEA_URL,
             "/asset/:collectionAddress/:tokenId",
             null,
             {
                 path: {collectionAddress: config.WORD_ADDRESS, tokenId: nftId.toString()},
                 query: {force_update: "true"}
             }, (data) => {
+                console.log("opensea updated")
                 resolve(data)
             }, (error) => {
                 console.error("opensea: ", error)
@@ -63,7 +67,9 @@ async function uploadWords(nfts: WordNft[], cid: string) {
         http = `https://ipfs.io/ipfs/${cid}`
     }
     console.log(`nft at ${http}`)
-    for (const nft of nfts) {
+    let i = 0
+    while (i < nfts.length) {
+        const nft = nfts[i]
         const imageUrl = `${http}/${nft.path}`
         const metadata = {
             name: nft.name,
@@ -78,27 +84,31 @@ async function uploadWords(nfts: WordNft[], cid: string) {
                 w4: nft.position == 3 ? nft.word : "",
                 w5: nft.position == 4 ? nft.word : "",
                 hue: nft.color.key,
-                initial : nft.word.slice(0, 1).toUpperCase()
+                initial: nft.word.slice(0, 1).toUpperCase()
             }
         }
-        await metadataClient.token.updateMetadata(
-            {
-                chainId: Blockchain.ETHEREUM,
-                collection: config.WORD_ADDRESS,
-                tokenId: nft.id.toString()
-            }, metadata)
-        const metadataUrl = `${config.METADATA_URL}/metadata/${Blockchain.ETHEREUM}/${config.WORD_ADDRESS}/${nft.id.toString()}`
-        console.log(`metadata updated for ${metadataUrl}`)
-        await createWord(nft.id, nft.word, metadata)
-        console.log("word created")
-        await updateOpensea(nft.id)
-        console.log("opensea updated")
+        try {
+            await metadataClient.token.updateMetadata(
+                {
+                    chainId: Blockchain.ETHEREUM,
+                    collection: config.WORD_ADDRESS,
+                    tokenId: nft.id.toString()
+                }, metadata)
+            const metadataUrl = `${config.METADATA_URL}/metadata/${Blockchain.ETHEREUM}/${config.WORD_ADDRESS}/${nft.id.toString()}`
+            console.log(`metadata updated for ${metadataUrl}`)
+            await createWord(nft.id, nft.word, metadata)
+            i++
+            //await updateOpensea(nft.id)
+        }
+        catch (e) {
+            console.error(`index[${i}]`, e)
+        }
     }
 }
 
-async function run(cid: string, version: string) {
+async function run(cid: string, version: string, start: number) {
     const nfts: WordNft[] = JSON.parse(fs.readFileSync(`./output/${version}/words.json`, 'utf8'))
-    await uploadWords(nfts, cid)
+    await uploadWords(nfts.slice(start), cid)
 }
 
 if (process.argv.length < 4) {
@@ -106,6 +116,6 @@ if (process.argv.length < 4) {
     process.exit(1)
 }
 
-run(process.argv[2], process.argv[3])
+run(process.argv[2], process.argv[3], process.argv[4] == null ? 0 : parseInt(process.argv[4]))
     .then()
     .catch(e => console.log(e))
