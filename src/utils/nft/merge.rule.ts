@@ -1,7 +1,8 @@
-import {isEmpty, isNotEmpty, merge, throwIf} from "@d-lab/common-kit"
+import {isEmpty, isNotEmpty, merge, numberOfDays, throwIf} from "@d-lab/common-kit"
 import Errors from "../errors/Errors"
 import {Art, Word} from "../../interfaces"
 import {colorHex, hexToRgb, RGB} from "../colors"
+import blockchainConfig from "../../config/blockchain.config"
 
 export type MetadataProps = { [key: string]: string | number | boolean | Date | undefined }
 
@@ -61,6 +62,8 @@ export function craftArt(words: Word[], ids: number[]): MergedNFT {
     props["hue2"] = ""
     props["hue3"] = ""
     props["hue4"] = ""
+    props["generation"] = 0
+    props["date"] = numberOfDays(new Date(blockchainConfig.CRAFT_LAUNCH_DATE), new Date())
     return {
         words: [
             props["w1"],
@@ -84,7 +87,7 @@ export function mergeArt(arts: Art[], ids: number[]): MergedNFT {
         w3: isNotEmpty(arts[0].metadata.properties["w3"]) ? arts[0].metadata.properties["w3"] : arts[1].metadata.properties["w3"],
         w4: isNotEmpty(arts[1].metadata.properties["w4"]) ? arts[1].metadata.properties["w4"] : arts[0].metadata.properties["w4"],
         w5: isNotEmpty(arts[0].metadata.properties["w5"]) ? arts[0].metadata.properties["w5"] : arts[1].metadata.properties["w5"],
-        generation: (arts[0].metadata.properties["generation"] > arts[1].metadata.properties["generation"] ? arts[0].metadata.properties["generation"] : arts[1].metadata.properties["generation"]) + 1,
+        generation: parseInt((arts[0].metadata.properties["generation"] > arts[1].metadata.properties["generation"] ? arts[0].metadata.properties["generation"] : arts[1].metadata.properties["generation"]).toString()) + 1,
         ...mergeHues(
             arts[0].metadata.properties["hue1"],
             arts[0].metadata.properties["hue2"],

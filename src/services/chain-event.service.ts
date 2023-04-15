@@ -68,10 +68,9 @@ export default class ChainEventService {
             merge = mergeArt(arts, ids)
         }
         const finalProps = {...merge.properties}
-        finalProps.date = numberOfDays(new Date(blockchainConfig.CRAFT_LAUNCH_DATE), new Date())
-        finalProps.complexity = merge.words.length
-        finalProps.style = merge.words.filter(isNotEmpty).length > 3 ? ColorStyle.POLYCHROMATIC : ColorStyle.MONOCHROME
-        finalProps.generation = isNull(finalProps.generation) ? 0 : parseInt(finalProps.generation!.toString()) + 1
+        const wordsLength = merge.words.filter(isNotEmpty).length
+        finalProps.complexity =wordsLength
+        finalProps.style = wordsLength > 3 ? ColorStyle.POLYCHROMATIC : ColorStyle.MONOCHROME
 
         await db.ArtRequests.create({
             chainEventId: chainEventId,
