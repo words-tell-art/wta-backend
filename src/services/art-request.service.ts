@@ -48,7 +48,7 @@ export default class ArtRequestService {
                 }
             )
             const chainEvent = await chainEventRepo.get(request.chainEventId)
-            const args: EventArguments = JSON.parse(it.arguments)
+            const args: EventArguments = JSON.parse(chainEvent.arguments)
             if (chainEvent.event === EventName.CRAFT) {
                 const burned: number[] = args.idBurned as []
                 const parentIds = [args.id, ...burned]
