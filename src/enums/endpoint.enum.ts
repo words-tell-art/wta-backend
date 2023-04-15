@@ -8,6 +8,7 @@ enum Endpoint {
     ART_Create = "/arts",
     ART_Update = "/arts",
     ART_Get = "/arts/:id",
+    ART_List = "/arts",
     ART_IsProcessing = "/art/is-processing",
     ART_GENEALOGY_Get = "/art/genealogy/:nftId",
     ART_REQUEST_List = "/art/requests",

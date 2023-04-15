@@ -1,10 +1,18 @@
-import {AuthBodyRequest, eq, PathRequest, QueryRequest} from "@d-lab/api-kit"
+import {AuthBodyRequest, eq, Filter, Page, PathRequest, QueryRequest} from "@d-lab/api-kit"
 import {artRepo, artRequestRepo, genealogyRepo} from "../repositories"
 import {artService} from "../services"
-import {ArtCreateRequest, ArtGetRequest, ArtIsProcessingRequest, ArtIsProcessingResponse, ArtUpdateRequest} from "../api/dtos/art"
+import {
+    ArtCreateRequest,
+    ArtGetRequest,
+    ArtIsProcessingRequest,
+    ArtIsProcessingResponse,
+    ArtListRequest,
+    ArtListResponse,
+    ArtUpdateRequest
+} from "../api/dtos/art"
 import ArtDto from "../api/dtos/art/art.dto"
 import {GenealogyDto, GenealogyGetRequest} from "../api/dtos/art/genealogy"
-import {isNotNull} from "@d-lab/common-kit"
+import {isNotNull, toOptDate} from "@d-lab/common-kit"
 import RequestState from "../enums/request-state.enum"
 
 export default class ArtController {
@@ -29,6 +37,21 @@ export default class ArtController {
             parentType: art.parentType,
             createdAt: art.createdAt,
             updatedAt: art.updatedAt,
+        }
+    }
+
+    async list(req: QueryRequest<ArtListRequest>): Promise<ArtListResponse> {
+        const payload = req.query
+        const page = Page.from(payload)
+        const filter = new Filter()
+            .gt({createdAt: toOptDate(payload.createdAfter)})
+            .lt({createdAt: toOptDate(payload.createdBefore)})
+            .paginate(page)
+
+        const arts = await artRepo.findAll(filter)
+        return {
+            arts: arts,
+            ...page.result(arts)
         }
     }
 
