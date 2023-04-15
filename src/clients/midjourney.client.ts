@@ -2,10 +2,11 @@ import {EnlargeType, MidjourneyPuppet, options} from "@d-lab/discord-puppet"
 import discordConfig from "../config/discord.config"
 import {artRequestRepo} from "../repositories"
 import {eq, logger} from "@d-lab/api-kit"
-import {artRequestService} from "../services"
+import {artRequestService, logService} from "../services"
 import RequestState from "../enums/request-state.enum"
 import {isNotNull, replaceAll} from "@d-lab/common-kit"
 import * as console from "console"
+import {LogEvent, LogScope} from "../enums"
 
 export default class MidjourneyClient {
     running = false
@@ -44,18 +45,23 @@ export default class MidjourneyClient {
         const requests = await artRequestRepo.findAll(eq({state: RequestState.CREATED}).orderAsc("blockNumber").orderAsc("id"))
         console.log(requests)
         for (const request of requests) {
-            console.log("[req] ", request.id, request.nftId)
-            const cmd = this.getCommand(
-                request.inputImage,
-                request.inputWords,
-                request.inputHues
-            )
-            const result = await this.puppet.imagineLarge(cmd, EnlargeType.U1)
-            console.log("[req]: ", result.imageUrl)
-            if (isNotNull(result.imageUrl)) {
-                await artRequestService.processed(request.id, result.imageUrl!)
+            try {
+                console.log("[req] ", request.id, request.nftId)
+                const cmd = this.getCommand(
+                    request.inputImage,
+                    request.inputWords,
+                    request.inputHues
+                )
+                const result = await this.puppet.imagineLarge(cmd, EnlargeType.U1)
+                console.log("[req]: ", result.imageUrl)
+                if (isNotNull(result.imageUrl)) {
+                    await artRequestService.processed(request.id, result.imageUrl!)
+                }
+                console.log("[req]: done")
+            } catch (e) {
+                logger.error(e.message)
+                await logService.create(LogScope.ART_REQUEST, LogEvent.UPDATE, request.id.toString(), e.message)
             }
-            console.log("[req]: done")
         }
         this.processing = false
     }
@@ -73,7 +79,7 @@ export default class MidjourneyClient {
         if (isNotNull(hues)) {
             colors = `colorful with ${hues!} dominant color`
         }
-        return `${isNotNull(image)? image + " " : ""}${words}::2 style cyberpunk::1.2 film noir, minimal environment, ${colors} --no frame`
+        return `${isNotNull(image) ? image + " " : ""}${words}::2 style cyberpunk::1.2 film noir, minimal environment, ${colors} --no frame`
     }
 
     async listen() {
