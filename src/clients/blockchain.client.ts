@@ -57,7 +57,7 @@ export default class BlockchainClient {
         const events = await this.art.queryFilter(filter, last?.blockNumber || 0, 'latest')
         const sorted = events.sort((a, b) => a.blockNumber - b.blockNumber)
         for (const event of sorted) {
-            await chainEventService.create(event.blockNumber, EventName.CRAFT, {
+            await chainEventService.create(event.blockNumber, EventName.MERGE, {
                 id: ((event["args"]![0]) as BigNumber).toNumber(),
                 idBurned: ((event["args"]![1]) as BigNumber).toNumber()
             })
