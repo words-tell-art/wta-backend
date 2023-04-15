@@ -51,7 +51,7 @@ export default class ArtRequestService {
             const args: EventArguments = JSON.parse(chainEvent.arguments)
             if (chainEvent.event === EventName.CRAFT) {
                 const burned: number[] = args.idBurned as []
-                const parentIds = [args.id, ...burned]
+                const parentIds = [...burned]
                 await artService.create(request.nftId, metadata, parentIds, TokenType.WORD)
             } else {
                 const parentIds = [args.id, args.idBurned as number]
