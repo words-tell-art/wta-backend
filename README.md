@@ -31,8 +31,7 @@ docker build .
 ```
 
 ### API Documentation
-API documentation can be viewed on
-Link:
+API documentation can be viewed on [ApiFox](https://apifox.com/apidoc/shared-ede8c92e-d7f4-4995-90e0-46ac2d0a34f5/api-71297034)
 
 ## Blockchain
 
@@ -43,7 +42,7 @@ COLLECTION_ART_ADDRESS=0xe4A4786956B7643b05642f3c3fE10d9298c65E48
 ```
 ### Mainnet
 ```dotenv
-COLLECTION_WORD_ADDRESS=
+COLLECTION_WORD_ADDRESS=0xd5e5a0d5ad5048af6e0f9479603eacbdbcf400ce
 COLLECTION_ART_ADDRESS=
 ```
 
