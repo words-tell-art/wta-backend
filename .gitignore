@@ -3,6 +3,7 @@ dist
 build
 .env
 .env.testnet
+.env.mainnet
 .idea
 .npmrc
 scripts/input
