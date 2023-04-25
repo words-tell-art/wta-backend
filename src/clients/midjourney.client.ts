@@ -31,7 +31,7 @@ export default class MidjourneyClient {
     async start() {
         await this.puppet.start()
         await this.puppet.clickServer("My AI Art")
-        await this.puppet.clickChannel("words-tell-art")
+        await this.puppet.clickChannel(discordConfig.ART_CHANNEL_NAME)
         await this.puppet.sendMessage("[wta-backend] ready")
         this.running = true
     }

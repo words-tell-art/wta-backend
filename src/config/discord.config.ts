@@ -5,7 +5,8 @@ const discordConfig = {
     DISCORD_PASSWORD: process.env.DISCORD_PASSWORD!,
     DISCORD_USER_DATA_DIR: process.env.DISCORD_USER_DATA_DIR!,
     APP_PUPPET_HEADLESS: process.env.APP_PUPPET_HEADLESS! === 'true',
-    APP_PUPPET_ARGS: JSON.parse(process.env.APP_PUPPET_ARGS!) as string[]
+    APP_PUPPET_ARGS: JSON.parse(process.env.APP_PUPPET_ARGS!) as string[],
+    ART_CHANNEL_NAME: process.env.ART_CHANNEL_NAME || "words-tell-art"
 }
 
 export default discordConfig

@@ -66,6 +66,7 @@ jobs:
             echo "DISCORD_USER_DATA_DIR=${{ secrets.DISCORD_USER_DATA_DIR }}" >> .env
             echo "APP_PUPPET_HEADLESS=${{ secrets.APP_PUPPET_HEADLESS }}" >> .env
             echo "APP_PUPPET_ARGS=${{ secrets.APP_PUPPET_ARGS }}" >> .env
+            echo "ART_CHANNEL_NAME=${{ secrets.ART_CHANNEL_NAME }}" >> .env
             pm2 stop wta-backend
             pm2 delete wta-backend
             pm2 start npm --name "wta-backend" -- start
