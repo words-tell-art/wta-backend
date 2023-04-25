@@ -43,7 +43,6 @@ export default class MidjourneyClient {
         }
         this.processing = true
         const requests = await artRequestRepo.findAll(eq({state: RequestState.CREATED}).orderAsc("blockNumber").orderAsc("id"))
-        console.log(requests)
         for (const request of requests) {
             try {
                 console.log("[req] ", request.id, request.nftId)
