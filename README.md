@@ -1,4 +1,4 @@
-# `API Template` ![NodeJS](https://img.shields.io/badge/node.js-6DA55F?style=for-the-badge&logo=node.js&logoColor=white)![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white)
+# `WordsTellArt API` ![NodeJS](https://img.shields.io/badge/node.js-6DA55F?style=for-the-badge&logo=node.js&logoColor=white)![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white)
 
 ## Project Setup
 
@@ -31,7 +31,7 @@ docker build .
 ```
 
 ### API Documentation
-API documentation can be viewed on [ApiFox](https://apifox.com/apidoc/shared-ede8c92e-d7f4-4995-90e0-46ac2d0a34f5/api-71297034)
+API documentation can be viewed on [ApiFox](https://wordstellart.apifox.cn)
 
 ## Blockchain
 
